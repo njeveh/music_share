@@ -6,9 +6,6 @@ import React, {
 } from "react";
 import NavLinks from "../nav-links";
 import {
-  AiOutlineHome
-} from "react-icons/ai";
-import {
   GiHamburgerMenu
 } from "react-icons/gi";
 import {
@@ -18,16 +15,12 @@ import {
 import {
   ModeToggle
 } from "../mode-toggler";
-import {
-  Button
-} from "@/components/ui/button";
-import {
-  Input
-} from "@/components/ui/input"
+import { usePathname } from "next/navigation";
 
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const pathName = usePathname();
 
     const handleDrawer = () => {
       setIsOpen(!isOpen);
@@ -67,7 +60,8 @@ return (
 
       <img src="https://i.imgur.com/520zDfd.png" alt="Logo" className="h-auto w-24" />
     </div>
-
+{
+  pathName === '/' &&
     <div className="hidden md:flex items-center flex-1 px-6">
       <form className="flex flex-row search-form w-full justify-center items-center">
         <input type="text" id="search-input" className="h-10 w-full max-w-[750px] rounded-tl-lg rounded-bl-lg dark:bg-slate-600"
@@ -78,6 +72,7 @@ return (
         </button>
       </form>
     </div>
+}
 
     <div className="flex items-center">
       {/* <div className="hidden md:flex md:justify-between md:bg-transparent">
@@ -93,6 +88,8 @@ return (
       <ModeToggle />
     </div>
   </div>
+  {
+    pathName === '/' &&
   <div className="flex md:hidden justify-center items-center w-full py-2">
     <form className="flex flex-1 flex-row search-form">
       <input type="text" id="search-input" className="h-10 w-full rounded-tl-lg rounded-bl-lg dark:bg-slate-600"
@@ -103,6 +100,7 @@ return (
       </button>
     </form>
   </div>
+  }
 
   {isOpen && (
   <div className="z-10 fixed inset-0 transition-opacity">

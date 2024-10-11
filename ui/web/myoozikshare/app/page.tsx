@@ -13,7 +13,7 @@ return (
           <div className="w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 min-[500px]:grid-cols-2">
             {cards.map((card, key) => {
               return (
-              <SongCard key={key} title='Sifa na Utukufu Vyote ni Kwa Mungu' />
+              <SongCard key={key} title='Sifa na Utukufu Vyote ni Kwa Mungu' composer='John M. Doe' />
               );
             })
           }      

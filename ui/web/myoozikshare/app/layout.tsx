@@ -1,5 +1,3 @@
-'use client'
-
 import { ThemeProvider } from "@/app/ui/components/theme-provider";
 import '@/app/ui/global.css';
 import { inter } from '@/app/ui/fonts';

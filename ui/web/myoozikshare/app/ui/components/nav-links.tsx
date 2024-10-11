@@ -37,12 +37,12 @@ import { usePathname } from 'next/navigation';
     {
         name: 'Sign up',
         icon: UserPlusIcon,
-        href: '/sign-up'
+        href: '/auth/sign-up'
     },
     {
         name: 'Sign in',
         icon: ArrowRightEndOnRectangleIcon,
-        href: '/sign-in'
+        href: '/auth/sign-in'
     },
     {
         name: 'Sign out',
@@ -61,14 +61,15 @@ import { usePathname } from 'next/navigation';
             <a
               key={link.name}
               href={link.href}
-              className={clsx('m-2 flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 dark:bg-inherit p-2 text-sm font-medium hover:bg-sky-100 dark:hover:bg-[#717171] hover:text-blue-600 dark:hover:text-white md:flex-none md:justify-start',
+              className={clsx('m-2 flex h-[48px] grow items-center justify-start gap-2 rounded-md bg-gray-50 dark:bg-inherit p-2 text-sm font-medium hover:bg-sky-100 dark:hover:bg-[#717171] hover:text-blue-600 dark:hover:text-white md:flex-none md:justify-start',
                 {
-                    'bg-sky-100 dark:bg-[#717171] text-blue-600 dark:text-white': pathName === link.href,
+                    'bg-sky-100 dark:bg-[#7e7d7d] text-blue-600 dark:text-white': pathName === link.href,
                   })
                 }
             >
               <LinkIcon className="w-6" />
-              <p className="hidden md:block">{link.name}</p>
+              {/* <p className="hidden md:block">{link.name}</p> */}
+              <p className="">{link.name}</p>
             </a>
           );
         })}

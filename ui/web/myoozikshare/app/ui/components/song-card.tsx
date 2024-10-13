@@ -5,9 +5,11 @@ import { MdLibraryMusic } from 'react-icons/md';
   export function SongCard({
     title,
     composer,
+    link,
   }: {
     title: string;
     composer: string;
+    link: string;
 
   }) {
   
@@ -33,7 +35,7 @@ import { MdLibraryMusic } from 'react-icons/md';
         <div>Posted by: Jane Doe</div>
         </div>
         <div>
-          <Link href={'/music-breakdown'}>
+          <Link href={link}>
             <Button>See breakdown</Button>
           </Link>
         </div>

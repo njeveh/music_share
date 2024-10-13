@@ -15,7 +15,9 @@ const Page = () => {
       <div>
         <Card>
           <CardHeader>
-            <CardTitle>Top! Top!</CardTitle>
+            <CardTitle>
+              <h1>Top! Top!</h1>
+            </CardTitle>
             <div  className="text-sm text-muted-foreground">
               <p >Composer: John M. Doe</p>
               <p >Posted by: Jane Doe</p>
@@ -193,6 +195,9 @@ const Page = () => {
               </div>
             </div>
           </CardContent>
+          {/* <CardFooter>
+            <p>Card Footer</p>
+          </CardFooter> */}
         </Card>
 
       </div>

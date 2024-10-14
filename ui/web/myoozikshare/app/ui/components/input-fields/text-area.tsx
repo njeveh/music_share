@@ -1,5 +1,5 @@
 
-const TextInput = ({label = '', customClasses = '', description = '', onChange = (event: any) => {}, value = '', ...props}) => {
+const TextArea = ({label = '', customClasses = '', description = '', onChange = (event: any) => {}, value = '', ...props}) => {
   return (
     <>
       <div className="w-full">
@@ -12,15 +12,15 @@ const TextInput = ({label = '', customClasses = '', description = '', onChange =
           </label>
         )}
         <div className="text-amber-500">{description}</div>
-        <input
+        <textarea
           className={`${customClasses} peer block w-full rounded-md border border-gray-200 py-[9px] pl-2 text-sm outline-2 placeholder:text-gray-500 dark:bg-slate-600 dark:placeholder:text-gray-100`}
           {...props}
           onChange={onChange}
           value={value}
-        />
+        ></textarea>
       </div>
     </>
   );
 };
 
-export default TextInput;
+export default TextArea;

@@ -1,0 +1,4 @@
+.search-form input#search-input:focus {
+    box-shadow: none;
+    border: 2px solid #065fd4;
+}

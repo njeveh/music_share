@@ -1,0 +1,33 @@
+.contact-box ul {
+    list-style-type: none;
+    text-align: left;
+    width: auto;
+}
+
+/* .contact-form {
+    text-align: left;
+    padding: 15px;
+    width: auto;
+    background-color: #00ffcd;
+} */
+.input-field {
+    border: solid;
+    border-color: rgb(24, 22, 22);
+    border-radius: 5px;
+    border-width: 0.5px;
+    padding: 5px;
+}
+textarea.input-field{
+    width: 80vw;
+    height: 45vh;
+}
+input.input-field {
+    width: 70vw;
+}
+label {
+    margin-bottom: 20px;
+}
+.btn {
+    width: 25vw;
+    margin: 10px;
+}

@@ -1,8 +1,8 @@
 
-const FileInput = ({label = '', description = '', customClasses = '', onChange = (event: any) => {}, value = '', ...props}) => {
+const FileInput = ({label = '', description = '', customClasses = '', onChange = (event: any) => {}, ...props}) => {
   return (
     <>
-      <div className="w-full">
+      <div className={`w-full ${customClasses}`}>
         {label && (
           <label
             htmlFor={props.id ? props.id : ''}
@@ -13,10 +13,9 @@ const FileInput = ({label = '', description = '', customClasses = '', onChange =
         )}
         <div className="text-amber-500">{description}</div>
         <input type="file"
-          className={`${customClasses} peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-slate-600 dark:placeholder:text-gray-100`}
+          className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-slate-600 dark:placeholder:text-gray-100"
           {...props}
           onChange={onChange}
-          value={value}
         />
       </div>
     </>

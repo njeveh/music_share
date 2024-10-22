@@ -1,0 +1,112 @@
+'use client'
+
+import { Inputs } from '@/app/lib/definitions';
+import { MicrophoneIcon} from '@heroicons/react/24/outline';
+import { useState, useRef } from 'react';
+import { BsUpload } from 'react-icons/bs';
+import AudioRecorder from './input-fields/audio-recorder';
+import FileInput from './input-fields/file-input';
+import { Button } from '@/components/ui/button';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+
+type SetInputs = React.Dispatch<React.SetStateAction<Inputs>>
+const AudioInput = (
+  {SegmentIndex, segmentComponentIndex, inputs, setInputs}:
+  {SegmentIndex: any; segmentComponentIndex: any; inputs: Inputs; setInputs: SetInputs}
+) => {
+    const audioRef: any = useRef();
+    const [previewUrl, setPreviewUrl] = useState('');
+
+
+const HandleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const name = event.target.name;
+      const files = event.target.files;
+        if (files && files[0]) {
+          const file = files[0];
+          const previewUrl = URL.createObjectURL(file);
+          if (SegmentIndex === null) {
+            setInputs((values) => ({
+              ...values,
+              [name]: {
+                file: file,
+                previewUrl: previewUrl
+              }
+            }));
+          }else {
+            const newInputs = {...inputs};
+            newInputs.segments[SegmentIndex].segmentComponents[segmentComponentIndex].audioFile = {
+              file: file,
+              previewUrl: previewUrl
+            };
+          setInputs((values) => ({
+            ...newInputs
+          }));
+        }
+        setPreviewUrl(previewUrl);
+        if(audioRef.current){
+          audioRef.current.pause();
+          audioRef.current.load();
+        }
+        }
+    }
+  return (
+    <div className="w-full mb-4">
+      <div className='mb-1 mt-4 block text-sm font-medium'>Audio:</div>
+      <Accordion type="single" collapsible>
+        <AccordionItem value="item-1" className='border-none'>
+          <div className="w-fit flex justify-center items-center gap-2">
+            <AccordionTrigger className='py-2'>
+                <div className='flex gap-2 md:gap-4 justify-center items-center'>
+                  <p>Select file</p>
+                  <BsUpload className='' />
+                </div>
+            </AccordionTrigger>
+          </div>
+          <AccordionContent>
+            <FileInput
+              description='(Select a clear audio file preferably, a piece recorded in a studio setup or live performance.)'
+              id="audioFile" name="audioFile" onChange={HandleFileInputChange} accept="audio/*" />
+          </AccordionContent>
+        </AccordionItem>
+          <AccordionItem value="item-2" className='border-none'>
+          <div className="w-fit flex justify-center items-center gap-2">
+            <AccordionTrigger className='py-2'>
+                <div className='flex gap-2 md:gap-4 justify-center items-center'>
+                  <p>Record</p>
+                  <MicrophoneIcon className='w-5' />
+                </div>
+            </AccordionTrigger>
+          </div>
+          <AccordionContent>
+            <AudioRecorder SegmentIndex={null} segmentComponentIndex={null} inputs={inputs} setInputs={setInputs} audioRef={audioRef} setPreviewUrl={setPreviewUrl} />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+      {previewUrl &&
+      <div className='border-2 border-dashed border-red-500 p-2 rounded'>
+        <div className='text-red-500'>Audio Input Preview</div>
+        <audio controls ref={audioRef} className='w-full my-2'>
+          <source src={previewUrl} type='audio/mpeg' />
+          <source src={previewUrl} type='audio/mp4' />
+          <source src={previewUrl} type='audio/ogg' />
+          <source src={previewUrl} type='audio/wav' />
+          <source src={previewUrl} type='audio/aac' />
+          <source src={previewUrl} type='audio/m4a' />
+          <p>
+            Your browser doesn't support this audio file.
+          </p>
+        </audio>
+      </div>
+      }
+      <div className={ inputs.inputErrors.audioFile ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>
+        {inputs.inputErrors.audioFile}
+      </div>
+    </div>
+  );
+}
+export default AudioInput;

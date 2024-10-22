@@ -2,7 +2,6 @@
 
 import React, { useRef, useState } from 'react';
 import { register } from '@/app/lib/actions';
-import { ValidateField } from '@/app/lib/form-validation/auth-forms-validation';
 import TextInput from '@/app/ui/components/input-fields/text-input';
 import { lusitana } from '@/app/ui/fonts';
 import ActionButton from '@/app/ui/components/action-button';
@@ -21,193 +20,56 @@ AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import FileInput from '@/app/ui/components/input-fields/file-input';
 import { Button } from '@/components/ui/button';
-import { MdAddCircleOutline, MdClose } from 'react-icons/md';
+import { MdAddCircleOutline } from 'react-icons/md';
 import TextArea from '@/app/ui/components/input-fields/text-area';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { FileIcon } from '@radix-ui/react-icons';
+import { Inputs } from '@/app/lib/definitions';
+import AudioInput from '@/app/ui/components/audio-input';
+import { AddSegment, AddSegmentComponent, RemoveSegment, RemoveSegmentComponent} from '../lib/utils'
+import { initialInputs } from '../lib/data';
 
 const Page = () => {
     const [buttonDisabled, setButtonDisabled] = useState(false);
     const alertDialogTrigger = useRef(null);
+    const audioRef = useRef();
     const router = useRouter();
     const [apiErrorMessages, setApiErrorMessages] = useState(['']);
-    const [inputs, setInputs] = useState({
-      title: '',
-      description: '',
-      composer: '',
-      score: '',
-      audioFile: '',
-      lyrics: '',
-      segments: [{
-        initial: true,
-        segmentTitle: '',
-        segmentComponents: [{
-          initial: true,
-          segmentComponentTitle: '',
-          audioFile: '',
-          inputErrors: {
-            segmentComponentTitle: '',
-            audioFile: '',
-          }
-        }, ],
-        inputError: '',
-      }, ],
-      inputErrors: {
-        title: '',
-        description: '',
-        composer: '',
-        score: '',
-        audioFile: '',
-        lyrics: '',
-      }
-    });
+    const [inputs, setInputs] = useState<Inputs>(initialInputs);
 
-    // add a segment
-    const AddSegment = () => {
-      if (inputs.segments[0].initial) {
-        setInputs((values) => ({
-          ...values,
-          segments: [{
-            initial: false,
-            segmentTitle: '',
-            segmentComponents: [{
-              initial: true,
-              segmentComponentTitle: '',
-              audioFile: '',
-              inputErrors: {
-                segmentComponentTitle: '',
-                audioFile: '',
-              }
-            }, ],
-            inputError: '',
-          }, ]
-        }));
-      } else {
-        setInputs((values) => ({
-          ...values,
-          segments: [
-            ...values.segments,
-            {
-              initial: false,
-              segmentTitle: '',
-              segmentComponents: [{
-                initial: true,
-                segmentComponentTitle: '',
-                audioFile: '',
-                inputErrors: {
-                  segmentComponentTitle: '',
-                  audioFile: '',
-                }
-              }, ],
-              inputError: '',
-            },
-          ]
-        }));
-      }
-    }
-
-    // add a segment component
-    const AddSegmentComponent = (index: any) => {
-      if (inputs.segments[index].segmentComponents[0].initial) {
-        inputs.segments[index].segmentComponents = [{
-          initial: false,
-          segmentComponentTitle: '',
-          audioFile: '',
-          inputErrors: {
-            segmentComponentTitle: '',
-            audioFile: '',
-          }
-        }, ];
-      } else {
-        inputs.segments[index].segmentComponents = [
-          ...inputs.segments[index].segmentComponents,
-          {
-            initial: false,
-            segmentComponentTitle: '',
-            audioFile: '',
-            inputErrors: {
-              segmentComponentTitle: '',
-              audioFile: '',
-            }
-          },
-        ];
-      }
-      // initiate a rerender.
-      setInputs((values) => ({
-        ...values,
-      }));
-
-    }
-
-    // remove a segment
-    const RemoveSegment = (index: any) => {
-      if (inputs.segments.length === 1) {
-        setInputs((values) => ({
-          ...values,
-          segments: [{
-            initial: true,
-            segmentTitle: '',
-            segmentComponents: [{
-              initial: true,
-              segmentComponentTitle: '',
-              audioFile: '',
-              inputErrors: {
-                segmentComponentTitle: '',
-                audioFile: '',
-              }
-            }, ],
-            inputError: '',
-          }, ]
-        }));
-      } else {
-        const newSegments = [...inputs.segments];
-        newSegments.splice(index, 1);
-        setInputs((values) => ({
-          ...values,
-          segments: newSegments
-        }));
-      }
-    }
-
-    // remove a segment component
-    const RemoveSegmentComponent = (index: any, componentIndex: any) => {
-      const newSegments = [...inputs.segments];
-      if (inputs.segments[index].segmentComponents.length === 1) {
-        const newSegmentComponents = [{
-          initial: true,
-          segmentComponentTitle: '',
-          audioFile: '',
-          inputErrors: {
-            segmentComponentTitle: '',
-            audioFile: '',
-          }
-        }, ];
-        newSegments[index].segmentComponents = newSegmentComponents;
-        setInputs((values) => ({
-          ...values,
-          segments: newSegments
-        }));
-      } else {
-        const newSegmentComponents = [...inputs.segments[index].segmentComponents];
-        newSegmentComponents.splice(componentIndex, 1);
-        newSegments[index].segmentComponents = newSegmentComponents;
-        setInputs((values) => ({
-          ...values,
-          segments: newSegments
-        }));
-      }
-    }
-
-    const HandleInputChange = (event: any) => {
+    const HandleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const name = event.target.name;
       const value = event.target.value;
       setInputs((values) => ({
         ...values,
         [name]: value
       }));
-    };
+    }
+
+    const HandleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const name = event.target.name;
+      const files = event.target.files;
+        if (files && files[0]) {
+          const file = files[0];
+          const previewUrl = URL.createObjectURL(file);
+          setInputs((values) => ({
+            ...values,
+            [name]: {
+              file: file,
+              previewUrl: previewUrl
+            }
+          }));
+        if(audioRef.current){
+          audioRef.current.pause();
+          audioRef.current.load();
+        }
+        }
+    }
+    
 
 
-    const HandleSubmit = (event: any) => {
+    const HandleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       console.log(inputs);
       return;
@@ -303,27 +165,22 @@ return (
             </div>
           </div>
           <div className="w-full mb-4">
-            <FileInput label="Score" id="score" name="score" required value={inputs.score || '' }
-              onChange={HandleInputChange} accept="image/png, image/jpg, image/jpeg, .pdf" />
+            <FileInput label="Score" id="score" name="score" required
+              onChange={HandleFileInputChange} accept="image/png, image/jpg, image/jpeg, .pdf" />
+            {inputs.score.file &&
+              <Link
+                href={inputs.score.previewUrl}
+                target="__blank" className="w-fit">
+              <FileIcon className="w-10 h-10 text-amber-500" />
+              </Link>
+            }              
             <div className={ inputs.inputErrors.score ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>
               {inputs.inputErrors.score}
             </div>
           </div>
           <div className="w-full mb-4">
-            <FileInput label="Audio"
-              description='(Select a clear audio file preferably, a piece recorded in a studio setup or live performance. A midi file would be the next best option.)'
-              id="audioFile" name="audioFile" required value={inputs.audioFile || '' } onChange={HandleInputChange} accept="audio/*" />
-            {inputs.audioFile &&
-            <div className='w-full my-2'>
-              <audio controls className='w-full'>
-                <source src={inputs.audioFile} type='audio/wav' />
-                <p>
-                  Your browser doesn't support this audio file. Here is a
-                  <a href="/assets/audio/baraka_top_top.wav">link to the audio</a> instead.
-                </p>
-              </audio>
-            </div>
-            }
+            <AudioInput SegmentIndex={null} segmentComponentIndex={null} inputs={inputs} setInputs={setInputs} />
+          </div>
           <div className="w-full mb-4">
             <TextArea rows={20} label="Lyrics" id="lyrics" name="lyrics" placeholder="Type music lyrics here" required
               value={inputs.lyrics || '' } onChange={HandleInputChange} />
@@ -331,15 +188,11 @@ return (
               {inputs.inputErrors.lyrics}
             </div>
           </div>
-            <div className={ inputs.inputErrors.audioFile ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>
-              {inputs.inputErrors.audioFile}
-            </div>
-          </div>
           {!inputs.segments[0].initial && inputs.segments.map((segment, index) => {
             return (
-              <div key={index} className='bg-sky-200 dark:bg-black p-4 my-4 rounded-lg'>
+              <div key={index} className='bg-sky-200 dark:bg-black p-2 my-4 rounded-lg'>
                 <div className='w-full flex justify-end items-center'>
-                  <button onClick={()=> RemoveSegment(index)} type='button' className='text-red-500 gap-1 text-3xl
+                  <button onClick={()=> RemoveSegment(inputs, setInputs, index)} type='button' className='text-red-500 gap-1 text-3xl
                     md:text-5xl'>
                     <TrashIcon className="w-7" />
                   </button>
@@ -364,7 +217,7 @@ return (
                   return(
                     <div key={componentIndex} className="mt-2 border p-2 rounded-lg  bg-slate-200 dark:bg-gray-900">
                       <div className='w-full flex justify-end items-center'>
-                        <button onClick={()=> RemoveSegmentComponent(index, componentIndex)} type='button'
+                        <button onClick={()=> RemoveSegmentComponent(inputs, setInputs, index, componentIndex)} type='button'
                           className='text-red-500 gap-1 text-2xl'>
                           <TrashIcon className="w-5" />
                         </button>
@@ -387,13 +240,7 @@ return (
                           </div>
                       </div>
                       <div className="w-full mb-4">
-                        <FileInput label="Audio" description='(Select a clear audioFile file.)'
-                          id={`audioFile-${index}-${componentIndex}`} name={`audioFile_${index}_${componentIndex}`} required
-                          value={segmentComponent.audioFile || '' } onChange={event=> {
-                          let data = {...inputs};
-                          data.segments[index].segmentComponents[componentIndex].audioFile = event.target.value;
-                          setInputs(data);
-                          }} accept="audio/*" />
+                          <AudioInput SegmentIndex={index} segmentComponentIndex={componentIndex} inputs={inputs} setInputs={() => setInputs} />
                           <div className={ segmentComponent.inputErrors.audioFile
                             ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>
                             {segmentComponent.inputErrors.audioFile}
@@ -404,14 +251,14 @@ return (
                 })
               }
             <div className="w-full my-4 flex justify-end">
-              <Button onClick={()=>AddSegmentComponent(index)} type='button'><MdAddCircleOutline className='me-1'/> Add segment component</Button>
+              <Button onClick={()=>AddSegmentComponent(inputs, setInputs, index)} type='button'><MdAddCircleOutline className='me-1'/> Add segment component</Button>
             </div>
           </div>
             );
 
           })}
           <div className="w-full my-4 flex justify-center items-center">
-            <Button onClick={AddSegment} type='button'><MdAddCircleOutline className='me-1'/> Add Segment</Button>
+            <Button onClick={() => AddSegment(inputs, setInputs)} type='button'><MdAddCircleOutline className='me-1'/> Add Segment</Button>
           </div>
           <ActionButton className='w-full flex justify-center items-center' disabled={buttonDisabled}>
             Submit

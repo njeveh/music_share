@@ -35,14 +35,6 @@ const Navbar = () => {
         }
       };
 
-      // if (isOpen) {
-      // // document.body.style.setProperty("overflow", "hidden");
-      // // document.body.classList.add('lock-scrollbar');
-      // } else {
-      // // document.body.style.removeProperty("overflow");
-      // // document.body.classList.remove('lock-scrollbar');
-      // }
-
       document.addEventListener("keydown", handleEscKeyPress);
 
       return () => {
@@ -75,16 +67,6 @@ return (
 }
 
     <div className="flex items-center">
-      {/* <div className="hidden md:flex md:justify-between md:bg-transparent">
-        {navList.map(({ icon, title }, index) => {
-        return (
-        <Button key={index} title="Wishlist" className="p-3 font-medium mr-2 rounded">
-          <span>{icon}</span>
-          <span>{title}</span>
-        </Button>
-        );
-        })}
-      </div> */}
       <ModeToggle />
     </div>
   </div>
@@ -113,9 +95,6 @@ return (
 
   <aside className={`transform top-0 left-0 w-64 fixed h-full bg-gray-50 dark:bg-darkmenubg overflow-auto ease-in-out transition-all duration-300 z-30
     ${ isOpen ? "translate-x-0" : "-translate-x-full" }`}>
-    {/* <span className="flex w-full items-center p-4 border-b">
-      <img src="https://i.imgur.com/520zDfd.png" alt="Logo" className="h-auto w-32 mx-auto" />
-    </span> */}
     <div className="px-4 py-2 flex items-center border-b">
       <button className="mr-4" aria-label="Close Menu" onClick={handleDrawer}>
         <GiHamburgerMenu className="text-3xl" />

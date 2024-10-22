@@ -1,6 +1,6 @@
 'use client'
 
-import { PencilSquareIcon } from "@heroicons/react/24/outline";
+import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { FileIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import {
@@ -13,20 +13,27 @@ import TextInput from "@/app/ui/components/input-fields/text-input";
 import ActionButton from "@/app/ui/components/action-button";
 import FileInput from "@/app/ui/components/input-fields/file-input";
 import TextArea from "@/app/ui/components/input-fields/text-area";
+import { MdAddCircleOutline } from "react-icons/md";
+import { Button } from "@/components/ui/button";
+import AudioInput from "@/app/ui/components/audio-input";
+import { Inputs } from "@/app/lib/definitions";
+import { initialInputs } from "../lib/data";
+import { useState } from "react";
 
 
 const Page = () => {
+  const [inputs, setInputs] = useState<Inputs>(initialInputs);
   return ( 
     <>
       <div>
         <div className="rounded-xl border bg-card text-card-foreground shadow">
           <div className="flex flex-col space-y-1.5 p-6">
-            <div className="font-semibold leading-none tracking-tight">
+            <div className="leading-none tracking-tight">
               <Accordion type="single" collapsible>
                 <AccordionItem value="item-1">
                   <div className="w-fit flex justify-center items-center gap-2">
-                    <div>
-                      Top! Top!
+                    <div className="font-bold text-3xl">
+                      Sifa na Utukufu Vyote ni Kwa Mungu eeh! eeh!
                     </div>
                     <AccordionTrigger>
                       <PencilSquareIcon className="w-5" />
@@ -131,29 +138,28 @@ const Page = () => {
             <div className="mb-2">
               <Accordion type="single" collapsible>
                 <AccordionItem value="item-1">
-                  <div className="w-fit flex justify-center items-center gap-2">
-                    <div>
-                      Audio
+                  <div>
+                    Audio:
+                  </div>
+                  <div className="w-full flex justify-center items-center gap-2">
+                    <div className='flex-1 my-2'>
+                      <audio controls className='w-full'>
+                        <source src='/assets/audio/baraka_top_top.wav' type="audio/wav" />
+                        <p>
+                          Your browser doesn't support this audio file. Here is a
+                          <a href="/assets/audio/baraka_top_top.wav">link to the audio</a> instead.
+                        </p>
+                      </audio>
                     </div>
                     <AccordionTrigger>
                       <PencilSquareIcon className="w-5" />
                     </AccordionTrigger>
                   </div>
-                  <div className='w-full my-2'>
-                    <audio controls className='w-full'>
-                      <source src='/assets/audio/top_top.mp3' type="audio/mp3" />
-                      <p>
-                        Your browser doesn't support this audio file. Here is a
-                        <a href="/assets/audio/top_top.mp3">link to the audio</a> instead.
-                      </p>
-                    </audio>
-                  </div>
                   <AccordionContent>
                     <form action="">
-                      <div className="w-full mb-4">
-                        <FileInput label="Audio"
-                          description='(Select a clear audio file preferably, a piece recorded in a studio setup or live performance. A midi file would be the next best option.)'
-                          id="audioFile" name="audioFile" required accept="audio/*" />
+                      <div className="w-full mb-2">
+                        <AudioInput SegmentIndex={null} segmentComponentIndex={null} inputs={inputs}
+                          setInputs={setInputs} />
                       </div>
                       <ActionButton>Update Audio</ActionButton>
                     </form>
@@ -186,154 +192,325 @@ const Page = () => {
               </Accordion>
             </div>            
             <div className="pt-4">
-              <div className="font-bold">Breakdown</div>
-              <div className="mt-2 border p-2 rounded-lg  bg-slate-200 dark:bg-gray-900">
-                <div className="font-medium">Stanzas</div>
-                <div className="p-2">
-                  <div>Tenor:</div>
-                  <div className='w-full my-2'>
-                    <audio controls className='w-full'>
-                      <source src='/assets/audio/stanzas.wav' type="audio/wav" />
-                      <p>
-                        Your browser doesn't support this audio file. Here is a
-                        <a href="/assets/audio/stanzas.wav">link to the audio</a> instead.
-                      </p>
-                    </audio>
+              <div className="font-bold text-2xl">Breakdown</div>
+              <div className="mt-4 border p-2 rounded-lg  bg-sky-200 dark:bg-black">
+                <div className='w-full flex justify-end items-center'>
+                  <button onClick={()=> ({})} type='button' className='text-red-500 gap-1 text-3xl
+                    md:text-5xl'>
+                    <TrashIcon className="w-7" />
+                  </button>
+                </div>
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="item-1">
+                    <div className="w-fit flex justify-center items-center gap-2">
+                      <div className="text-amber-600 text-2xl font-bold">
+                        Chorus
+                      </div>
+                      <AccordionTrigger>
+                        <PencilSquareIcon className="w-5" />
+                      </AccordionTrigger>
+                    </div>
+                    <AccordionContent>
+                      <form action="">
+                        <div className="w-full mb-4">
+                          <TextInput label="Segment Title" type="text" id="segmentTitle" name="segmentTitle"
+                            placeholder="Segment title" required autoComplete="on" />
+                        </div>
+                        <ActionButton>Update Segment Title</ActionButton>
+                      </form>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+                <div className="mt-2 border p-2 rounded-lg  bg-slate-200 dark:bg-gray-900">
+                  <div className='w-full flex justify-end items-center'>
+                    <button onClick={()=> ({})} type='button'
+                      className='text-red-500 gap-1 text-2xl'>
+                      <TrashIcon className="w-5" />
+                    </button>
                   </div>
+                  <Accordion type="single" collapsible>
+                    <AccordionItem value="item-1">
+                      <Accordion type="single" collapsible>
+                        <AccordionItem value="item-1">
+                          <div className="w-fit flex justify-center items-center gap-2">
+                            <div className="text-lg font-bold">
+                              All:
+                            </div>
+                            <AccordionTrigger>
+                              <PencilSquareIcon className="w-5" />
+                            </AccordionTrigger>
+                          </div>
+                          <AccordionContent>
+                            <form action="">
+                              <div className="w-full mb-4">
+                                <TextInput label="Component Title" type="text" id="componentTitle" name="componentTitle"
+                                  placeholder="Component title" required autoComplete="on" />
+                              </div>
+                              <ActionButton>Update Component Title</ActionButton>
+                            </form>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                      <div className="w-full flex justify-center items-center gap-2">
+                        <div className='flex-1 my-2'>
+                          <audio controls className='w-full'>
+                            <source src='/assets/audio/baraka_top_top.wav' type="audio/wav" />
+                            <p>
+                              Your browser doesn't support this audio file. Here is a
+                              <a href="/assets/audio/baraka_top_top.wav">link to the audio</a> instead.
+                            </p>
+                          </audio>
+                        </div>
+                        <AccordionTrigger>
+                          <PencilSquareIcon className="w-5" />
+                        </AccordionTrigger>
+                      </div>
+                      <AccordionContent>
+                        <form action="">
+                          <div className="w-full mb-2">
+                            <AudioInput SegmentIndex={null} segmentComponentIndex={null} inputs={inputs}
+                              setInputs={setInputs} />
+                          </div>
+                          <ActionButton>Update Audio</ActionButton>
+                        </form>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+                <div className="mt-2 border p-2 rounded-lg  bg-slate-200 dark:bg-gray-900">
+                  <div className='w-full flex justify-end items-center'>
+                    <button onClick={()=> ({})} type='button'
+                      className='text-red-500 gap-1 text-2xl'>
+                      <TrashIcon className="w-5" />
+                    </button>
+                  </div>
+                  <Accordion type="single" collapsible>
+                    <AccordionItem value="item-1">
+                      <Accordion type="single" collapsible>
+                        <AccordionItem value="item-1">
+                          <div className="w-fit flex justify-center items-center gap-2">
+                            <div className="text-lg font-bold">
+                              Soprano:
+                            </div>
+                            <AccordionTrigger>
+                              <PencilSquareIcon className="w-5" />
+                            </AccordionTrigger>
+                          </div>
+                          <AccordionContent>
+                            <form action="">
+                              <div className="w-full mb-4">
+                                <TextInput label="Component Title" type="text" id="componentTitle" name="componentTitle"
+                                  placeholder="Component title" required autoComplete="on" />
+                              </div>
+                              <ActionButton>Update Component Title</ActionButton>
+                            </form>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                      <div className="w-full flex justify-center items-center gap-2">
+                        <div className='flex-1 my-2'>
+                          <audio controls className='w-full'>
+                            <source src='/assets/audio/baraka_top_top.wav' type="audio/wav" />
+                            <p>
+                              Your browser doesn't support this audio file. Here is a
+                              <a href="/assets/audio/baraka_top_top.wav">link to the audio</a> instead.
+                            </p>
+                          </audio>
+                        </div>
+                        <AccordionTrigger>
+                          <PencilSquareIcon className="w-5" />
+                        </AccordionTrigger>
+                      </div>
+                      <AccordionContent>
+                        <form action="">
+                          <div className="w-full mb-2">
+                            <AudioInput SegmentIndex={null} segmentComponentIndex={null} inputs={inputs}
+                              setInputs={setInputs} />
+                          </div>
+                          <ActionButton>Update Audio</ActionButton>
+                        </form>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+                                <div className="mt-2 border p-2 rounded-lg  bg-slate-200 dark:bg-gray-900">
+                  <div className='w-full flex justify-end items-center'>
+                    <button onClick={()=> ({})} type='button'
+                      className='text-red-500 gap-1 text-2xl'>
+                      <TrashIcon className="w-5" />
+                    </button>
+                  </div>
+                  <Accordion type="single" collapsible>
+                    <AccordionItem value="item-1">
+                      <Accordion type="single" collapsible>
+                        <AccordionItem value="item-1">
+                          <div className="w-fit flex justify-center items-center gap-2">
+                            <div className="text-lg font-bold">
+                              Alto:
+                            </div>
+                            <AccordionTrigger>
+                              <PencilSquareIcon className="w-5" />
+                            </AccordionTrigger>
+                          </div>
+                          <AccordionContent>
+                            <form action="">
+                              <div className="w-full mb-4">
+                                <TextInput label="Component Title" type="text" id="componentTitle" name="componentTitle"
+                                  placeholder="Component title" required autoComplete="on" />
+                              </div>
+                              <ActionButton>Update Component Title</ActionButton>
+                            </form>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                      <div className="w-full flex justify-center items-center gap-2">
+                        <div className='flex-1 my-2'>
+                          <audio controls className='w-full'>
+                            <source src='/assets/audio/baraka_top_top.wav' type="audio/wav" />
+                            <p>
+                              Your browser doesn't support this audio file. Here is a
+                              <a href="/assets/audio/baraka_top_top.wav">link to the audio</a> instead.
+                            </p>
+                          </audio>
+                        </div>
+                        <AccordionTrigger>
+                          <PencilSquareIcon className="w-5" />
+                        </AccordionTrigger>
+                      </div>
+                      <AccordionContent>
+                        <form action="">
+                          <div className="w-full mb-2">
+                            <AudioInput SegmentIndex={null} segmentComponentIndex={null} inputs={inputs}
+                              setInputs={setInputs} />
+                          </div>
+                          <ActionButton>Update Audio</ActionButton>
+                        </form>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+                                <div className="mt-2 border p-2 rounded-lg  bg-slate-200 dark:bg-gray-900">
+                  <div className='w-full flex justify-end items-center'>
+                    <button onClick={()=> ({})} type='button'
+                      className='text-red-500 gap-1 text-2xl'>
+                      <TrashIcon className="w-5" />
+                    </button>
+                  </div>
+                  <Accordion type="single" collapsible>
+                    <AccordionItem value="item-1">
+                      <Accordion type="single" collapsible>
+                        <AccordionItem value="item-1">
+                          <div className="w-fit flex justify-center items-center gap-2">
+                            <div className="text-lg font-bold">
+                              Tenor:
+                            </div>
+                            <AccordionTrigger>
+                              <PencilSquareIcon className="w-5" />
+                            </AccordionTrigger>
+                          </div>
+                          <AccordionContent>
+                            <form action="">
+                              <div className="w-full mb-4">
+                                <TextInput label="Component Title" type="text" id="componentTitle" name="componentTitle"
+                                  placeholder="Component title" required autoComplete="on" />
+                              </div>
+                              <ActionButton>Update Component Title</ActionButton>
+                            </form>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                      <div className="w-full flex justify-center items-center gap-2">
+                        <div className='flex-1 my-2'>
+                          <audio controls className='w-full'>
+                            <source src='/assets/audio/baraka_top_top.wav' type="audio/wav" />
+                            <p>
+                              Your browser doesn't support this audio file. Here is a
+                              <a href="/assets/audio/baraka_top_top.wav">link to the audio</a> instead.
+                            </p>
+                          </audio>
+                        </div>
+                        <AccordionTrigger>
+                          <PencilSquareIcon className="w-5" />
+                        </AccordionTrigger>
+                      </div>
+                      <AccordionContent>
+                        <form action="">
+                          <div className="w-full mb-2">
+                            <AudioInput SegmentIndex={null} segmentComponentIndex={null} inputs={inputs}
+                              setInputs={setInputs} />
+                          </div>
+                          <ActionButton>Update Audio</ActionButton>
+                        </form>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+                                <div className="mt-2 border p-2 rounded-lg  bg-slate-200 dark:bg-gray-900">
+                  <div className='w-full flex justify-end items-center'>
+                    <button onClick={()=> ({})} type='button'
+                      className='text-red-500 gap-1 text-2xl'>
+                      <TrashIcon className="w-5" />
+                    </button>
+                  </div>
+                  <Accordion type="single" collapsible>
+                    <AccordionItem value="item-1">
+                      <Accordion type="single" collapsible>
+                        <AccordionItem value="item-1">
+                          <div className="w-fit flex justify-center items-center gap-2">
+                            <div className="text-lg font-bold">
+                              Bass:
+                            </div>
+                            <AccordionTrigger>
+                              <PencilSquareIcon className="w-5" />
+                            </AccordionTrigger>
+                          </div>
+                          <AccordionContent>
+                            <form action="">
+                              <div className="w-full mb-4">
+                                <TextInput label="Component Title" type="text" id="componentTitle" name="componentTitle"
+                                  placeholder="Component title" required autoComplete="on" />
+                              </div>
+                              <ActionButton>Update Component Title</ActionButton>
+                            </form>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                      <div className="w-full flex justify-center items-center gap-2">
+                        <div className='flex-1 my-2'>
+                          <audio controls className='w-full'>
+                            <source src='/assets/audio/baraka_top_top.wav' type="audio/wav" />
+                            <p>
+                              Your browser doesn't support this audio file. Here is a
+                              <a href="/assets/audio/baraka_top_top.wav">link to the audio</a> instead.
+                            </p>
+                          </audio>
+                        </div>
+                        <AccordionTrigger>
+                          <PencilSquareIcon className="w-5" />
+                        </AccordionTrigger>
+                      </div>
+                      <AccordionContent>
+                        <form action="">
+                          <div className="w-full mb-2">
+                            <AudioInput SegmentIndex={null} segmentComponentIndex={null} inputs={inputs}
+                              setInputs={setInputs} />
+                          </div>
+                          <ActionButton>Update Audio</ActionButton>
+                        </form>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+                <div className="w-full my-4 flex justify-end">
+                  <Button onClick={()=>({})} type='button'><MdAddCircleOutline className='me-1'/> Add segment component</Button>
                 </div>
               </div>
-
-              <div className="mt-2 border p-2 rounded-lg  bg-slate-200 dark:bg-gray-900">
-                <div className="font-medium">Chorus</div>
-                <div className="p-2">
-                  <div>All:</div>
-                  <div className='w-full my-2'>
-                    <audio controls className='w-full'>
-                      <source src='/assets/audio/chorus.wav' type="audio/wav" />
-                      <p>
-                        Your browser doesn't support this audio file. Here is a
-                        <a href="/assets/audio/chorus.wav">link to the audio</a> instead.
-                      </p>
-                    </audio>
-                  </div>
-                </div>
-                <div className="p-2">
-                  <div>Soprano:</div>
-                  <div className='w-full my-2'>
-                    <audio controls className='w-full'>
-                      <source src='/assets/audio/chorus_sop.wav' type="audio/wav" />
-                      <p>
-                        Your browser doesn't support this audio file. Here is a
-                        <a href="/assets/audio/chorus_sop.wav">link to the audio</a> instead.
-                      </p>
-                    </audio>
-                  </div>
-                </div>
-                <div className="p-2">
-                  <div>Alto:</div>
-                  <div className='w-full my-2'>
-                    <audio controls className='w-full'>
-                      <source src='/assets/audio/chorus_alto.wav' type="audio/wav" />
-                      <p>
-                        Your browser doesn't support this audio file. Here is a
-                        <a href="/assets/audio/chorus_alto.wav">link to the audio</a> instead.
-                      </p>
-                    </audio>
-                  </div>
-                </div>
-                <div className="p-2">
-                  <div>Tenor:</div>
-                  <div className='w-full my-2'>
-                    <audio controls className='w-full'>
-                      <source src='/assets/audio/chorus_tenor.wav' type="audio/wav" />
-                      <p>
-                        Your browser doesn't support this audio file. Here is a
-                        <a href="/assets/audio/chorus_tenor.wav">link to the audio</a> instead.
-                      </p>
-                    </audio>
-                  </div>
-                </div>
-                <div className="p-2">
-                  <div>Bass:</div>
-                  <div className='w-full my-2'>
-                    <audio controls className='w-full'>
-                      <source src='/assets/audio/chorus_bass.wav' type="audio/wav" />
-                      <p>
-                        Your browser doesn't support this audio file. Here is a
-                        <a href="/assets/audio/chorus_bass.wav">link to the audio</a> instead.
-                      </p>
-                    </audio>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-2 border p-2 rounded-lg  bg-slate-200 dark:bg-gray-900">
-                <div className="font-medium">Conclusion</div>
-                <div className="p-2">
-                  <div>All:</div>
-                  <div className='w-full my-2'>
-                    <audio controls className='w-full'>
-                      <source src='/assets/audio/conclusion.wav' type="audio/wav" />
-                      <p>
-                        Your browser doesn't support this audio file. Here is a
-                        <a href="/assets/audio/conclusion.wav">link to the audio</a> instead.
-                      </p>
-                    </audio>
-                  </div>
-                </div>
-                <div className="p-2">
-                  <div>Soprano:</div>
-                  <div className='w-full my-2'>
-                    <audio controls className='w-full'>
-                      <source src='/assets/audio/conclusion_sop.wav' type="audio/wav" />
-                      <p>
-                        Your browser doesn't support this audio file. Here is a
-                        <a href="/assets/audio/conclusion_sop.wav">link to the audio</a> instead.
-                      </p>
-                    </audio>
-                  </div>
-                </div>
-                <div className="p-2">
-                  <div>Alto:</div>
-                  <div className='w-full my-2'>
-                    <audio controls className='w-full'>
-                      <source src='/assets/audio/conclusion_alto.wav' type="audio/wav" />
-                      <p>
-                        Your browser doesn't support this audio file. Here is a
-                        <a href="/assets/audio/conclusion_alto.wav">link to the audio</a> instead.
-                      </p>
-                    </audio>
-                  </div>
-                </div>
-                <div className="p-2">
-                  <div>Tenor:</div>
-                  <div className='w-full my-2'>
-                    <audio controls className='w-full'>
-                      <source src='/assets/audio/conclusion_tenor.wav' type="audio/wav" />
-                      <p>
-                        Your browser doesn't support this audio file. Here is a
-                        <a href="/assets/audio/conclusion_tenor.wav">link to the audio</a> instead.
-                      </p>
-                    </audio>
-                  </div>
-                </div>
-                <div className="p-2">
-                  <div>Bass:</div>
-                  <div className='w-full my-2'>
-                    <audio controls className='w-full'>
-                      <source src='/assets/audio/conclusion_bass.wav' type="audio/wav" />
-                      <p>
-                        Your browser doesn't support this audio file. Here is a
-                        <a href="/assets/audio/conclusion_bass.wav">link to the audio</a> instead.
-                      </p>
-                    </audio>
-                  </div>
-                </div>
+              <div className="w-full my-4 flex justify-center items-center">
+                <Button onClick={()=>({})} type='button'><MdAddCircleOutline className='me-1'/> Add segment</Button>
               </div>
             </div>
           </div>
         </div>
-
       </div>
     </>
   );

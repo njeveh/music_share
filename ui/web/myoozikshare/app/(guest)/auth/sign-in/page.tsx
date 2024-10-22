@@ -16,48 +16,58 @@ import Link from 'next/link';
 import {
     lusitana
 } from '@/app/ui/fonts';
+import PasswordInput from '@/app/ui/components/input-fields/password-input';
+import { useActionState } from 'react';
+import { authenticate } from '@/app/lib/actions';
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
+import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 
 const Page = () => {
-        // const dispatch = useDispatch();
-        // const navigate = useNavigate();
-        const API_BASE_URL = 'http://localhost:8000/api';
-        const [apiErrorMessage, setApiErrorMessage] = useState('');
-        const [inputs, setInputs] = useState({
-            email: '',
-            password: ''
-        });
+    const [errorMessage, formAction, isPending] = useActionState(
+      authenticate,
+      undefined,
+    );
+    // const dispatch = useDispatch();
+    // const navigate = useNavigate();
+    const API_BASE_URL = 'http://localhost:8000/api';
+    const [apiErrorMessage, setApiErrorMessage] = useState('');
+    const [inputs, setInputs] = useState({
+      email: '',
+      password: ''
+    });
 
-        const HandleChange = (event) => {
-            const name = event.target.name;
-            const value = event.target.value;
-            setInputs((values) => ({
-                ...values,
-                [name]: value
-            }));
-        };
-        const HandleSubmit = (e) => {
-            e.preventDefault();
-            setApiErrorMessage('');
-            const data = {
-                email: inputs.email,
-                password: inputs.password
-            };
-            // axios.post(`${API_BASE_URL}/login`, { ...data }).then((res) => {
-            // if (res.status == 200) {
-            // if (res.data.status !== 'success') {
-            // setApiErrorMessage(res.data.error_messages);
-            // } else if (res.data.status == 'success') {
-            // dispatch(userLoaded(res.data.data));
-            // localStorage.setItem('lastLoginTime', new Date(Date.now()).getTime());
-            // navigate('/dashboard', { replace: true });
-            // }
-            // }
-            // });
-        };
-return (
+    const HandleChange = (event: any) => {
+      const name = event.target.name;
+      const value = event.target.value;
+      setInputs((values) => ({
+        ...values,
+        [name]: value
+      }));
+    };
+    const HandleSubmit = (e: any) => {
+      e.preventDefault();
+      setApiErrorMessage('');
+      const data = {
+        email: inputs.email,
+        password: inputs.password
+      };
+      // axios.post(`${API_BASE_URL}/login`, { ...data }).then((res) => {
+      // if (res.status == 200) {
+      // if (res.data.status !== 'success') {
+      // setApiErrorMessage(res.data.error_messages);
+      // } else if (res.data.status == 'success') {
+      // dispatch(userLoaded(res.data.data));
+      // localStorage.setItem('lastLoginTime', new Date(Date.now()).getTime());
+      // navigate('/dashboard', { replace: true });
+      // }
+      // }
+      // });
+    };
+  return (
     <>
-        <div className="">
-          <form onSubmit={HandleSubmit} className="space-y-3">
+      <div className="">
+        <form action={formAction} className="space-y-3">
+          {/* <form onSubmit={HandleSubmit} className="space-y-3"> */}
             <div
               className="flex justify-center items-center flex-col rounded-lg bg-gray-50 dark:bg-gray-900 px-6 pb-4 pt-8">
               <h1 className={`${lusitana.className} mb-3 text-2xl`}>
@@ -70,7 +80,7 @@ return (
                     onChange={HandleChange} autoFocus />
                 </div>
                 <div className="mb-4">
-                  <TextInput label="Password" type="password" id="password" name="password"
+                  <PasswordInput label="Password" type="password" id="password" name="password"
                     placeholder="Enter your password here." required value={inputs.password || '' }
                     onChange={HandleChange} />
                 </div>
@@ -78,17 +88,31 @@ return (
                 <div className="m-2 p-2 bg-red-100 text-red-600 rounded-lg">{apiErrorMessage}</div>
                 )}
 
-                <div className="mt-4">
+                {/* <div className="mt-4">
                   <Button type="submit" className="w-full" children="Sign In" />
+                </div> */}
+                <Button className="mt-4 w-full" aria-disabled={isPending}>
+                  Log in
+                  <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+                </Button>
+                <div className="flex h-8 items-end space-x-1" aria-live="polite" aria-atomic="true">
+                  {errorMessage && (
+                  <>
+                    <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+                    <p className="text-sm text-red-500">{errorMessage}</p>
+                  </>
+                  )}
                 </div>
                 <div className="mt-4 flex flex-row flex-wrap gap-4 md:gap-8 justify-center items-center">
                   <div>
-                    <Link href="/auth/forgot-password" className="text-blue-500 dark:text-gray-50 hover:text-blue-700 dark:hover:text-blue-500">
+                    <Link href="/auth/forgot-password"
+                      className="text-blue-500 dark:text-gray-50 hover:text-blue-700 dark:hover:text-blue-500">
                     Forgot password?
                     </Link>
                   </div>
                   <div>
-                    <Link href="/auth/sign-up" className="text-blue-500 dark:text-gray-50 hover:text-blue-700 dark:hover:text-blue-500">
+                    <Link href="/auth/sign-up"
+                      className="text-blue-500 dark:text-gray-50 hover:text-blue-700 dark:hover:text-blue-500">
                     Don't have an account? Sign Up.
                     </Link>
                   </div>
@@ -96,9 +120,9 @@ return (
               </div>
             </div>
           </form>
-        </div>
+      </div>
     </>
-);
+  );
 };
 
 export default Page;

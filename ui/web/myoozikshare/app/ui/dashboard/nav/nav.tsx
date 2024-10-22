@@ -14,6 +14,11 @@ import {
 } from "react-icons/bs";
 import { ModeToggle } from "../../components/mode-toggler";
 import { usePathname } from "next/navigation";
+import { logo } from "../../fonts";
+import { ArrowRightStartOnRectangleIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import Link from "next/link";
+import clsx from "clsx";
 
 
 const Nav = () => {
@@ -33,14 +38,6 @@ const Nav = () => {
         }
       };
 
-      // if (isOpen) {
-      // // document.body.style.setProperty("overflow", "hidden");
-      // // document.body.classList.add('lock-scrollbar');
-      // } else {
-      // // document.body.style.removeProperty("overflow");
-      // // document.body.classList.remove('lock-scrollbar');
-      // }
-
       document.addEventListener("keydown", handleEscKeyPress);
 
       return () => {
@@ -55,8 +52,7 @@ return (
       <button className="mr-4" aria-label="Open Menu" onClick={handleDrawer}>
         <GiHamburgerMenu className="text-3xl" />
       </button>
-
-      <img src="https://i.imgur.com/520zDfd.png" alt="Logo" className="h-auto w-24" />
+      <div className={`${logo.className} font-bold text-xl`}>MyooZikshare</div>
     </div>
 {
   pathName === '/dashboard/my-music' &&
@@ -73,16 +69,6 @@ return (
 }
 
     <div className="flex items-center">
-      {/* <div className="hidden md:flex md:justify-between md:bg-transparent">
-        {navList.map(({ icon, title }, index) => {
-        return (
-        <Button key={index} title="Wishlist" className="p-3 font-medium mr-2 rounded">
-          <span>{icon}</span>
-          <span>{title}</span>
-        </Button>
-        );
-        })}
-      </div> */}
       <ModeToggle />
     </div>
   </div>
@@ -111,25 +97,50 @@ return (
 
   <aside className={`transform top-0 left-0 w-64 fixed h-full bg-gray-50 dark:bg-darkmenubg overflow-auto ease-in-out transition-all duration-300 z-30
     ${ isOpen ? "translate-x-0" : "-translate-x-full" }`}>
-    {/* <span className="flex w-full items-center p-4 border-b">
-      <img src="https://i.imgur.com/520zDfd.png" alt="Logo" className="h-auto w-32 mx-auto" />
-    </span> */}
     <div className="px-4 py-2 flex items-center border-b">
       <button className="mr-4" aria-label="Close Menu" onClick={handleDrawer}>
         <GiHamburgerMenu className="text-3xl" />
       </button>
-
-      <img src="https://i.imgur.com/520zDfd.png" alt="Logo" className="h-auto w-24" />
+      <div className={`${logo.className} font-extrabold text-lg`}>MyooZikshare</div>
     </div>
     <NavLinks />
     <div className="fixed bottom-0 w-full">
-      <button className="flex items-center p-4 bg-blue-500 hover:bg-blue-600 w-full">
-        <span className="mr-2">
-          <BsShare className="text-2xl" />
-        </span>
-
-        <span>Share</span>
-      </button>
+      <Accordion type="single" collapsible className="p-4 border-none">
+        <AccordionItem value="item-2" className='border-none'>
+          <div className="w-fit flex justify-center items-center gap-2">
+            <AccordionTrigger className='py-2'>
+              <div className='flex gap-2 md:gap-4 justify-center items-center'>
+                <UserCircleIcon className="w-10" />
+                <span>John M. Doe</span>
+              </div>
+            </AccordionTrigger>
+          </div>
+          <AccordionContent>
+            <Link
+                href={'#'}
+                className={clsx('m-2 flex h-[48px] grow items-center justify-start gap-2 rounded-md bg-gray-50 dark:bg-inherit p-2 text-sm font-medium hover:bg-sky-100 dark:hover:bg-[#717171] hover:text-blue-600 dark:hover:text-white md:flex-none md:justify-start',
+                  {
+                      'bg-sky-100 dark:bg-[#7e7d7d] text-blue-600 dark:text-white': pathName === '',
+                    })
+                  }
+              >
+              <UserCircleIcon className="w-6" />
+              <p className="hidden md:block">Profile</p>
+            </Link>            
+            <Link
+                href={'#'}
+                className={clsx('m-2 flex h-[48px] grow items-center justify-start gap-2 rounded-md bg-gray-50 dark:bg-inherit p-2 text-sm font-medium hover:bg-sky-100 dark:hover:bg-[#717171] hover:text-blue-600 dark:hover:text-white md:flex-none md:justify-start',
+                  {
+                      'bg-sky-100 dark:bg-[#7e7d7d] text-blue-600 dark:text-white': pathName === '',
+                    })
+                  }
+              >
+              <ArrowRightStartOnRectangleIcon className="w-6" />
+              <p className="hidden md:block">Sign Out</p>
+            </Link>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   </aside>
 </nav>

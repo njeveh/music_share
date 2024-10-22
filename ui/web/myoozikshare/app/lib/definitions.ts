@@ -1,7 +1,6 @@
-// This file contains type definitions for your data.
+// This file contains type definitions for data used.
 // It describes the shape of the data, and what data type each property should accept.
-// For simplicity of teaching, we're manually defining these types.
-// However, these types are generated automatically if you're using an ORM such as Prisma.
+
 export type User = {
   id: string;
   name: string;
@@ -40,7 +39,7 @@ export type LatestInvoice = {
 };
 
 // The database returns a number for amount, but we later format it to a string with the formatCurrency function
-export type LatestInvoiceRaw = Omit<LatestInvoice, 'amount'> & {
+export type LatestInvoiceRaw = Omit < LatestInvoice, 'amount' > & {
   amount: number;
 };
 
@@ -85,4 +84,48 @@ export type InvoiceForm = {
   customer_id: string;
   amount: number;
   status: 'pending' | 'paid';
+};
+
+type InputFile = {
+  file: any;
+  previewUrl: string;
+};
+
+type SegmentComponentInputErrors = {
+  segmentComponentTitle: string,
+  audioFile: string,
+}
+
+type SegmentComponent = {
+  initial: boolean;
+  segmentComponentTitle: string;
+  audioFile: InputFile;
+  inputErrors: SegmentComponentInputErrors;
+};
+
+type Segment = {
+  initial: boolean;
+  segmentTitle: string;
+  segmentComponents: SegmentComponent[];
+  inputError: string;
+};
+
+type InputErrors = {
+  title: string;
+  description: string;
+  composer: string;
+  score: string;
+  audioFile: string;
+  lyrics: string;
+};
+
+export type Inputs = {
+  title: string;
+  description: string;
+  composer: string;
+  score: InputFile;
+  audioFile: InputFile;
+  lyrics: string;
+  segments: Segment[];
+  inputErrors: InputErrors;
 };

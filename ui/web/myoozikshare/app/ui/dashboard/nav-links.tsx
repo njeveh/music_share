@@ -1,11 +1,12 @@
 import {
   UserGroupIcon,
   HomeIcon,
-  DocumentDuplicateIcon,
   HandRaisedIcon,
+  UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { usePathname } from 'next/navigation';
+import { BsMusicNoteBeamed } from 'react-icons/bs';
 
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
@@ -14,24 +15,18 @@ const links = [
   {
     name: 'My music',
     href: '/dashboard/my-music',
-    icon: DocumentDuplicateIcon,
+    icon: BsMusicNoteBeamed,
   },
   {
     name: 'My music groups',
-    href: '/dashboard/music-rooms',
-    icon: DocumentDuplicateIcon,
+    href: '/dashboard/my-music-groups',
+    icon: UserGroupIcon,
   },
   {
         name: 'Requests',
         icon: HandRaisedIcon,
         href: '/requests'
-  },
-  {
-    name: 'Profile',
-    href: '/dashboard/profile',
-    icon: DocumentDuplicateIcon,
-  },
-  { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
+  }
 ];
 
 export default function NavLinks() {

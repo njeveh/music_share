@@ -16,11 +16,23 @@ import {
   ModeToggle
 } from "../mode-toggler";
 import { usePathname } from "next/navigation";
-
+import Link from "next/link";
+import { getSession } from "@/app/lib/actions";
+import { Session } from "next-auth";
+import { DashboardIcon } from "@radix-ui/react-icons";
 
 const Navbar = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const pathName = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+  const pathName = usePathname();
+  const [session, setSession] = useState<Session | null>();
+
+  useEffect(()=>{
+    getSession().then((res) => {
+      //console.log(res);
+      setSession(res);
+    });
+  },[pathName]);
+    
 
     const handleDrawer = () => {
       setIsOpen(!isOpen);
@@ -103,15 +115,18 @@ return (
       <img src="https://i.imgur.com/520zDfd.png" alt="Logo" className="h-auto w-24" />
     </div>
     <NavLinks />
-    <div className="fixed bottom-0 w-full">
-      <button className="flex items-center p-4 bg-blue-500 hover:bg-blue-600 w-full">
-        <span className="mr-2">
-          <BsShare className="text-2xl" />
-        </span>
-
-        <span>Share</span>
-      </button>
-    </div>
+    {session &&(
+      <div className="fixed bottom-0 w-full">
+        <Link
+            href={'/dashboard'}
+            className='m-2 flex h-[48px] grow items-center justify-start gap-2 rounded-md bg-gray-50 dark:bg-inherit p-2 text-sm font-medium hover:bg-sky-100 dark:hover:bg-[#717171] hover:text-blue-600 dark:hover:text-white md:flex-none md:justify-start'
+          >
+          <DashboardIcon className="w-6" />
+          <p className="">Dashboard</p>
+        </Link>
+      </div>
+    )
+}
   </aside>
 </nav>
 );

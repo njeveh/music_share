@@ -1,6 +1,7 @@
 'use client'
 
 import React, {
+  FormEvent,
 useState
 } from 'react';
 import {
@@ -18,10 +19,10 @@ const Page = () => {
     const [email, setEmail] = useState('');
     const [emailSent, setEmailSent] = useState(false);
 
-    const HandleChange = (event) => {
+    const HandleChange = (event: any) => {
       setEmail(event.target.value);
     };
-    const HandleSubmit = (e) => {
+    const HandleSubmit = (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setApiErrorMessage('');
       const data = {

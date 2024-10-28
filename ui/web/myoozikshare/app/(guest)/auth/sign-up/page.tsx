@@ -1,11 +1,11 @@
 'use client'
 
 import React, {
+  ButtonHTMLAttributes,
   useRef,
   useState
 } from 'react';
 import { register } from '@/app/lib/actions';
-import axios from 'axios';
 import {
   ValidateField
 } from '@/app/lib/form-validation/auth-forms-validation';
@@ -32,16 +32,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import PasswordInput from '@/app/ui/components/input-fields/password-input';
 
 
 const Page = () => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const alertDialogTrigger = useRef(null);
+  const alertDialogTrigger = useRef<HTMLButtonElement>(null);
     const router = useRouter();
     const [apiErrorMessages, setApiErrorMessages] = useState(['']);
     const [inputs, setInputs] = useState({
       firstName: '',
       lastName: '',
+      userName: '',
       email: '',
       password: '',
       passwordConfirmation: ''
@@ -49,12 +51,13 @@ const Page = () => {
     const [inputErrors, setInputErrors] = useState({
       firstName: '',
       lastName: '',
+      userName: '',
       email: '',
       password: '',
       passwordConfirmation: '',
     });
 
-    const HandleChange = (event) => {
+    const HandleChange = (event: any) => {
       const name = event.target.name;
       const value = event.target.value;
       setInputs((values) => ({
@@ -88,7 +91,7 @@ const Page = () => {
       }
     };
 
-    const HandleSubmit = (event) => {
+    const HandleSubmit = (event: any) => {
       event.preventDefault();
       setButtonDisabled(true);
       setApiErrorMessages([]);
@@ -102,22 +105,23 @@ const Page = () => {
         const data = {
           first_name: inputs.firstName,
           last_name: inputs.lastName,
+          user_name: inputs.userName,
           email: inputs.email,
           password: inputs.password,
           password_confirmation: inputs.passwordConfirmation
         };
         register(true, data).catch(err => {
-          // console.log(err)
           setApiErrorMessages(["Sorry, we couldn't process your request. Something went wrong, please try again."]);
           alertDialogTrigger.current?.click();
         }).then((res) => {
           if (res !== void({})){
+            // console.log(res.data);
             if (res.status === 'fail') {
               setApiErrorMessages(res.error_messages);
               alertDialogTrigger.current?.click();
             }else if (res.status === 'success'){
-              //console.log(res.data);
-              router.push('/auth/email-verification-notice')
+              // console.log(res.data);
+              router.push('/dashboard/email-verification-notice')
 
             }
           }
@@ -145,7 +149,6 @@ return (
               );
               })}
             </div>
-
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -160,6 +163,7 @@ return (
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
           Sign Up
         </h1>
+        <p className='text-amber-600'>All fields marked with an asterisk (<span className="text-red-600">*</span>) are mandatory.</p>
         <div className='w-full md:w-3/4 lg:w-1/2'>
           <div className="w-full mb-4">
             <TextInput label="First Name" type="text" id="firstName" name="firstName"
@@ -178,6 +182,14 @@ return (
             </div>
           </div>
           <div className="w-full mb-4">
+            <TextInput label="User Name" type="text" id="userName" name="userName"
+              placeholder="Enter your prefered user name here." autoComplete="on" value={inputs.userName || '' }
+              onChange={HandleChange} />
+            <div className={ inputErrors.userName ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>
+              {inputErrors.userName}
+            </div>
+          </div>          
+          <div className="w-full mb-4">
             <TextInput label="Email Address" type="email" id="email" name="email" placeholder="Enter your email here."
               required autoComplete="on" value={inputs.email || '' } onChange={HandleChange} />
             <div className={ inputErrors.email ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>
@@ -185,7 +197,7 @@ return (
             </div>
           </div>
           <div className="w-full mb-4">
-            <TextInput label="Choose a password" type="password" id="password" name="password"
+            <PasswordInput label="Password" type="password" id="password" name="password"
               placeholder="Enter your first password here." required value={inputs.password || '' }
               onChange={HandleChange} />
             <div className={ inputErrors.password ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>
@@ -193,7 +205,7 @@ return (
             </div>
           </div>
           <div className="w-full mb-4">
-            <TextInput label="Type your password again" type="password" id="passwordConfirmation"
+            <PasswordInput label="Password Confirmation" type="password" id="passwordConfirmation"
               name="passwordConfirmation" placeholder="Confirm your password." required
               value={inputs.passwordConfirmation || '' } onChange={HandleChange} />
             <div className={ inputErrors.passwordConfirmation ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2'

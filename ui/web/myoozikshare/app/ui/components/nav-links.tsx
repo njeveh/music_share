@@ -10,52 +10,66 @@ import {
 import clsx from 'clsx';
 import { usePathname } from 'next/navigation';
   import { MdOutlineContactPhone } from "react-icons/md";
+  import { useSession } from "next-auth/react";
+import { Session } from 'next-auth';
+import { useEffect, useState } from 'react';
+import { getSession } from '@/app/lib/actions';
   
   // Map of links to display in the side navigation.
   // Depending on the size of the application, this would be stored in a database.
+  
+  export default function NavLinks() {
+    const pathName = usePathname();
+    const [session, setSession] = useState<Session | null>();
+
+    useEffect(()=>{
+      getSession().then((res) => {
+        //console.log(res);
+        setSession(res);
+      });
+    },[pathName]);
+  const hidden = session != null;
   const links = [
     {
         name: 'Home',
         icon: HomeIcon,
-        href: '/'
+        href: '/',
+        hidden: false
     },
     {
         name: 'Requests',
         icon: HandRaisedIcon,
-        href: '/requests'
+        href: '/requests',
+        hidden: false
     },
     {
         name: 'About',
         icon: InformationCircleIcon,
-        href: '/about'
+        href: '/about',
+        hidden: false
     },
     {
         name: 'Contact Us',
         icon: MdOutlineContactPhone,
-        href: '/contact-us'
+        href: '/contact-us',
+        hidden: false
     },
     {
         name: 'Sign up',
         icon: UserPlusIcon,
-        href: '/auth/sign-up'
+        href: '/auth/sign-up',
+        hidden: hidden
     },
     {
         name: 'Sign in',
         icon: ArrowRightEndOnRectangleIcon,
-        href: '/auth/sign-in'
-    },
-    {
-        name: 'Sign out',
-        icon: ArrowRightStartOnRectangleIcon,
-        href: '/'
+        href: '/auth/sign-in',
+        hidden: hidden
     },
   ];
-  
-  export default function NavLinks() {
-    const pathName = usePathname();
     return (
       <>
-        {links.map((link) => {
+        {links.filter((link)=>!link.hidden).map((link) => {
           const LinkIcon = link.icon;
           return (
             <a

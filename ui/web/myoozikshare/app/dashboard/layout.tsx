@@ -1,7 +1,7 @@
 import Nav from '../ui/dashboard/nav/nav';
 import Footer from '../ui/components/footer/footer';
 
-export default function GuestLayout(
+export default async function DashboardLayout(
     {
         children,
       }: {
@@ -10,12 +10,12 @@ export default function GuestLayout(
 ) {
 
 return (
-<>
-  <Nav />
-  <main className="flex flex-col p-6 pb-[100px]">
-    {children}
-  </main>
-  <Footer />
-</>
+  <>
+    <Nav />
+    <main className="flex flex-col p-6 pb-[100px]">
+      {children}
+    </main>
+    <Footer />
+  </>
 );
 }

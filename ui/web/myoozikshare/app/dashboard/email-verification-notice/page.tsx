@@ -10,7 +10,7 @@ import {
   } from "@/components/ui/card"
 import { Button } from '@/app/ui/button';
 import { useEffect, useState } from 'react';
-import { getSession, ResendEmailVerificationCode, VerifyEmailAddress } from "@/app/lib/actions";
+import { getSession, ResendEmailVerificationCode, VerifyEmailAddress } from "@/app/lib/actions/auth";
 import { CheckBadgeIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { MdWarning } from "react-icons/md";
 import ActionButton from "@/app/ui/components/action-button";
@@ -19,11 +19,11 @@ import { Session } from "next-auth";
   
 const Page = () => {
   const [input, setInput] = useState('');  
-  const [feedback, setFeedback] = useState({
+  const [feedback, setFeedback] = useState<any>({
     status: '',
     message: ''
   });
-  const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const pathName = usePathname();
   const [session, setSession] = useState<Session | null>();
 
@@ -36,28 +36,31 @@ const Page = () => {
 
   function HandleSubmit(event: any) {
     event.preventDefault();
+    if (isPending) return;
+    setIsPending(true);
     if (input ) {
-      setButtonDisabled(true);
       VerifyEmailAddress(input).catch(err => {
           setFeedback({
             status: 'fail',
             message: "Sorry, we couldn't process your request. Something went wrong, please try again."
           });
+          setIsPending(false);
         }).then((res) => {
         //console.log(res);
         setFeedback(res);
+        setIsPending(false);
       });
-      setButtonDisabled(false);
     }
   }
 
   function HandleResendEmailVerificationCodeRequest(event: any) {
-    setButtonDisabled(true);
+    if (isPending) return;
+    setIsPending(true);
     ResendEmailVerificationCode().then((res) => {
       //console.log(res);
       setFeedback(res);
+      setIsPending(false);
     });
-    setButtonDisabled(false);
   }
 
     return (
@@ -70,7 +73,7 @@ const Page = () => {
           <CardContent>
             <div className="w-full flex flex-col justify-center items-center">
               <p className='w-full lg:w-3/4'>
-                Hello {`${session?.user.firstName}, ` } welcome to MyoozikShare and thank you for joining us.
+                Hello {`${session?.user.userName || session?.user?.firstName}, ` } welcome to MyoozikShare and thank you for joining us.
                 Please check your email inbox for a verification code we just sent you, enter it below and submit to
                 verify your address. If you did not receive the code don't worry, just click on the resend button
                 below and we shall mail you one.
@@ -79,8 +82,8 @@ const Page = () => {
               <form onSubmit={HandleSubmit} className="" id="verificationCodeForm">
                 <div className="flex gap-2 p-2">
                   <input className="w-[150px] text-gray-950" type="text" name='emailVerificationCode' id='emailVerificationCode' value={input} onChange={(e) => {setInput(e.target.value)}} placeholder="Enter code here." required />
-                  <ActionButton type="submit" className="bg-green-700 hover:bg-green-500" aria-disabled={buttonDisabled}>
-                    Submit
+                  <ActionButton type="submit" className="bg-green-700 hover:bg-green-500" disabled={isPending}>
+                    {isPending? 'Processing...': 'Submit'}
                   </ActionButton>
                 </div>
               </form>
@@ -108,9 +111,9 @@ const Page = () => {
           </CardContent>
           <CardFooter>
             <div className='w-full flex justify-center items-center'>
-              <Button type="button" className='w-52 md:w-80 flex justify-center items-center' aris-disabled={buttonDisabled} onClick={(e)=>HandleResendEmailVerificationCodeRequest(e)}>
-                Resend
-              </Button>
+              <ActionButton type="button" className='w-52 md:w-80 flex justify-center items-center' disabled={isPending} onClick={(e)=>HandleResendEmailVerificationCodeRequest(e)}>
+                {isPending? 'Processing...': 'Resend'}
+              </ActionButton>
             </div>
           </CardFooter>
         </Card>

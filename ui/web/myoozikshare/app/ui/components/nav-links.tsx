@@ -13,7 +13,7 @@ import { usePathname } from 'next/navigation';
   import { useSession } from "next-auth/react";
 import { Session } from 'next-auth';
 import { useEffect, useState } from 'react';
-import { getSession } from '@/app/lib/actions';
+import { getSession } from '@/app/lib/actions/auth';
   
   // Map of links to display in the side navigation.
   // Depending on the size of the application, this would be stored in a database.

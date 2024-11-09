@@ -10,29 +10,31 @@ import {
 } from "react-icons/gi";
 import {
   BsSearch,
-  BsShare
 } from "react-icons/bs";
 import { ModeToggle } from "../../components/mode-toggler";
 import { usePathname } from "next/navigation";
 import { logo } from "../../fonts";
-import { ArrowRightStartOnRectangleIcon, PowerIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { ArrowRightStartOnRectangleIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Link from "next/link";
 import clsx from "clsx";
-import { getSession, logOut } from "@/app/lib/actions";
+import { getSession, logOut } from "@/app/lib/actions/auth";
 import { Session } from "next-auth";
+import { useSession } from "next-auth/react";
 
 
 const Nav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathName = usePathname();
-  const [session, setSession] = useState<Session | null>();
+  const [authSession, setAuthSession] = useState<Session | null>();
+  const { data: session} = useSession();
 
   useEffect(()=>{
     getSession().then((res) => {
-      setSession(res);
+      setAuthSession(res);
     });
-  },[pathName]);
+    setIsOpen(false);
+  },[pathName, session]);
 
 
   useEffect(() => {
@@ -120,13 +122,13 @@ return (
             <AccordionTrigger className='py-2'>
               <div className='flex gap-2 md:gap-4 justify-center items-center'>
                 <UserCircleIcon className="w-10" />
-                <span>{session?.user?.firstName}</span>
+                <span>{authSession?.user.userName || authSession?.user?.firstName}</span>
               </div>
             </AccordionTrigger>
           </div>
           <AccordionContent>
             <Link
-                href={'#'}
+                href={'/dashboard/profile'}
                 className={clsx('m-2 flex h-[48px] grow items-center justify-start gap-2 rounded-md bg-gray-50 dark:bg-inherit p-2 text-sm font-medium hover:bg-sky-100 dark:hover:bg-[#717171] hover:text-blue-600 dark:hover:text-white md:flex-none md:justify-start',
                   {
                       'bg-sky-100 dark:bg-[#7e7d7d] text-blue-600 dark:text-white': pathName === '',
@@ -141,7 +143,7 @@ return (
               className=""
             >
               <button className="w-full m-2 flex h-[48px] grow items-center justify-start gap-2 rounded-md bg-gray-50 dark:bg-inherit p-2 text-sm font-medium hover:bg-sky-100 dark:hover:bg-[#717171] hover:text-blue-600 dark:hover:text-white md:flex-none md:justify-start">
-                <PowerIcon className="w-6" />
+                <ArrowRightStartOnRectangleIcon className="w-6" />
                 <p className="">Sign Out</p>
               </button>
             </form>

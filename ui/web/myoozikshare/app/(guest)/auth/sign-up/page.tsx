@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { register } from '@/app/lib/actions';
+import { register } from '@/app/lib/actions/auth';
 import {
   ValidateField
 } from '@/app/lib/form-validation/auth-forms-validation';
@@ -31,16 +31,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 import PasswordInput from '@/app/ui/components/input-fields/password-input';
+import { SignUpData } from '@/app/lib/definitions';
 
 
 const Page = () => {
-  const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const alertDialogTrigger = useRef<HTMLButtonElement>(null);
     const router = useRouter();
     const [apiErrorMessages, setApiErrorMessages] = useState(['']);
-    const [inputs, setInputs] = useState({
+    const [inputs, setInputs] = useState<SignUpData>({
       firstName: '',
       lastName: '',
       userName: '',
@@ -93,25 +94,20 @@ const Page = () => {
 
     const HandleSubmit = (event: any) => {
       event.preventDefault();
-      setButtonDisabled(true);
+      if (isPending) return;
+      setIsPending(true);
       setApiErrorMessages([]);
       if (
         inputErrors.firstName == '' &&
         inputErrors.lastName == '' &&
+        inputErrors.userName == '' &&
         inputErrors.email == '' &&
         inputErrors.password == '' &&
         inputErrors.passwordConfirmation == ''
       ) {
-        const data = {
-          first_name: inputs.firstName,
-          last_name: inputs.lastName,
-          user_name: inputs.userName,
-          email: inputs.email,
-          password: inputs.password,
-          password_confirmation: inputs.passwordConfirmation
-        };
-        register(true, data).catch(err => {
+        register(inputs).catch(err => {
           setApiErrorMessages(["Sorry, we couldn't process your request. Something went wrong, please try again."]);
+          setIsPending(false);
           alertDialogTrigger.current?.click();
         }).then((res) => {
           if (res !== void({})){
@@ -125,9 +121,8 @@ const Page = () => {
 
             }
           }
+          setIsPending(false);
         });
-
-      setButtonDisabled(false);
     }
   }
 return (
@@ -183,7 +178,7 @@ return (
           </div>
           <div className="w-full mb-4">
             <TextInput label="User Name" type="text" id="userName" name="userName"
-              placeholder="Enter your prefered user name here." autoComplete="on" value={inputs.userName || '' }
+              placeholder="Enter your preferred user name here." autoComplete="on" value={inputs.userName || '' }
               onChange={HandleChange} />
             <div className={ inputErrors.userName ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>
               {inputErrors.userName}
@@ -197,7 +192,7 @@ return (
             </div>
           </div>
           <div className="w-full mb-4">
-            <PasswordInput label="Password" type="password" id="password" name="password"
+            <PasswordInput label="Password" id="password" name="password"
               placeholder="Enter your first password here." required value={inputs.password || '' }
               onChange={HandleChange} />
             <div className={ inputErrors.password ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>
@@ -205,7 +200,7 @@ return (
             </div>
           </div>
           <div className="w-full mb-4">
-            <PasswordInput label="Password Confirmation" type="password" id="passwordConfirmation"
+            <PasswordInput label="Password Confirmation" id="passwordConfirmation"
               name="passwordConfirmation" placeholder="Confirm your password." required
               value={inputs.passwordConfirmation || '' } onChange={HandleChange} />
             <div className={ inputErrors.passwordConfirmation ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2'
@@ -213,8 +208,8 @@ return (
               {inputErrors.passwordConfirmation}
             </div>
           </div>
-          <ActionButton className='w-full' disabled={buttonDisabled}>
-            Sign Up
+          <ActionButton className='w-full' disabled={isPending}>
+            {isPending? 'Signing you up...': 'Sign up'}
             <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
           </ActionButton>
           <div className="flex justify-center items-center mt-4">

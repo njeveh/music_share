@@ -5,9 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use MarcinOrlowski\ResponseBuilder\BaseApiCodes;
@@ -22,7 +20,7 @@ class AuthenticatedSessionController extends BaseController
         try {
             $validator = Validator::make($request->all(),
                 [
-                    'email' => ['required', 'string', 'lowercase', 'email'],
+                    'email' => ['required', 'string', 'email'],
                     'password' => ['required', 'string'],
                 ]
             );
@@ -32,10 +30,9 @@ class AuthenticatedSessionController extends BaseController
             if (Auth::attempt($validator->valid())) {;
                 $user = User::where('email', $request->email)->first();
                 $token = $user->createToken('API TOKEN');
+                $user['access_token'] = $token->plainTextToken;
                 $data = [
                     'user' => $user,
-                    'has_verified_email' => $user->hasVerifiedEmail(),
-                    'token' => $token->plainTextToken
                 ];
                 //Log::info($data);
                 return $this->respond($data, 'User logged in successfully.');
@@ -43,6 +40,7 @@ class AuthenticatedSessionController extends BaseController
             return $this->respondWithErrorMessage('Invalid credentials.', BaseApiCodes::EX_VALIDATION_EXCEPTION(), 400);
 
         } catch (\Throwable $th) {
+            //Log::info($th);
             return $this->respondWithError(BaseApiCodes::EX_UNCAUGHT_EXCEPTION(), 500);
         }
     }
@@ -56,7 +54,7 @@ class AuthenticatedSessionController extends BaseController
             $request->user()->tokens()->delete();
             return $this->respondWithMessage('User logged out successfully.');
         } catch (\Throwable $th) {
-            Log::info($th);
+            //Log::info($th);
             return $this->respondWithError(BaseApiCodes::EX_UNCAUGHT_EXCEPTION(), 500);
         }
     }

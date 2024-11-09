@@ -16,15 +16,19 @@ class EmailVerificationController extends BaseController
             $message = 'email address is already verified';
             return $this->respondWithErrorMessage($message, BaseApiCodes::EX_HTTP_EXCEPTION(), 400);
         }
+        if ($user->verificationCodes()->where('type','email')->exists()) {
+            $codes = $user->verificationCodes()->where('type', 'email')->get();
+            VerificationCode::destroy($codes);
+        }
         VerificationCode::create(
             [
                 'user_id' => $user->id,
-                'code' => random_int(1001, 9999),
+                'code' => random_int(100001, 999999),
                 'type' => 'email'
             ]
         );
 
-        $user->notify(new EmailVerification($user));;
+        $user->notify(new EmailVerification($user));
 
         return $this->respondWithMessage('email address verification code sent successfully');
     }

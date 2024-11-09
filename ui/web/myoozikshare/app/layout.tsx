@@ -14,7 +14,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased min-h-screen relative`}>
-      <ThemeProvider
+        <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
@@ -22,7 +22,7 @@ export default async function RootLayout({
           >
           <SessionProvider session={session}>{children}</SessionProvider>
         </ThemeProvider> 
-        </body>
+      </body>
     </html>
   );
 }

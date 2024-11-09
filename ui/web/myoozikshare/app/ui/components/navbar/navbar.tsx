@@ -17,7 +17,7 @@ import {
 } from "../mode-toggler";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { getSession } from "@/app/lib/actions";
+import { getSession } from "@/app/lib/actions/auth";
 import { Session } from "next-auth";
 import { DashboardIcon } from "@radix-ui/react-icons";
 
@@ -31,6 +31,7 @@ const Navbar = () => {
       //console.log(res);
       setSession(res);
     });
+    setIsOpen(false);
   },[pathName]);
     
 

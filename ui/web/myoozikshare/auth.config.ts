@@ -1,4 +1,5 @@
-import type { NextAuthConfig } from 'next-auth';
+import type { NextAuthConfig, Session } from 'next-auth';
+import { User } from './app/lib/definitions';
  
 export const authConfig = {
   pages: {
@@ -24,16 +25,25 @@ export const authConfig = {
       }
       return true;
     },
-    async jwt({token, user}){
-      return {...token, ...user}
+    async jwt({token, user, trigger, session}){
+      if (user) {
+        token.user = user;
+      }
+      if (trigger === "update" && session) {
+        token = {...token, user : session}
+        return token;
+      };
+      return token;
     },
-    async session ({ session, token}) {
-      session.user = token as any ;
+    async session ({ session, token, trigger}) {
+      // const {accessToken, ...rest} = token.user as User;
+      session.user = token.user as User;
       return session;
     },
   },
   session: {
     strategy: "jwt",
   },
-  providers: [], // Add providers with an empty array for now
+  secret: process.env.AUTH_SECRET,
+  providers: [],
 } satisfies NextAuthConfig;

@@ -24,6 +24,7 @@ Here is your email address verification code. This code will be invalid after 6 
         </td>
     </tr>
 </table>
+If you did not create an account on our platform please just ignore this mail.<br><br>
 
 Regards,<br>
 {{ config('app.name') }}

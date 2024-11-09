@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\MusicGroup;
+use App\Models\MusicGroupAdmin;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,9 +17,22 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // User::factory()->count(20)->create([
+        //     'password' => 'Test@123',
+        // ]);
+
+        $user = User::factory(20)
+            ->hasAttached(
+                MusicGroup::factory()
+                    ->state(function (array $attributes, User $user) {
+                        return ['creator_name' => $user->first_name.' '.$user->last_name];
+                    }),
+                    [
+                        'is_creator' => true,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+            )
+            ->create(['password' => 'Test@123',]);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\MusicGroupAdmin;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -24,11 +26,14 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'user_name' => fake()->userName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'is_active' => true,
         ];
     }
 
@@ -40,5 +45,22 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * Configure the model factory.
+     */
+    public function configure(): static
+    {
+        return $this->afterMaking(function (User $user) {
+            // ...
+        })->afterCreating(function (User $user) {
+            $music_group_member = $user->musicGroupMembers()->where('is_creator', true)->first();
+            MusicGroupAdmin::factory()->create([
+                'music_group_member_id' => $music_group_member->id,
+                'is_super_admin' => true,
+                'roles' => json_encode(['manage_members','manage_music'])
+            ]);
+        });
     }
 }

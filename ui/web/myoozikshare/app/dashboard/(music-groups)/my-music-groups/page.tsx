@@ -16,43 +16,47 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { MdAddCircleOutline } from "react-icons/md";
 import { BsSearch } from "react-icons/bs";
- 
-const groups = [
-  {
-    
-    name: "Kwaya ya mtakatifu Kizito Makuburi",
-    status: "member",
-  },
-  {
-    
-    name: "Group 002",
-    status: "pending",
-  },
-  {
-    
-    name: "Group 003",
-    status: "pending",
-  },
-  {
-    
-    name: "St. Peter's Kavuvwani Catholic Church Choir",
-    status: "member",
-  },
-  {
-    name: "Group 005",
-    status: "pending",
-  },
-  {
-    name: "Group 006",
-    status: "member",
-  },
-  {
-    name: "Evangelical Singers",
-    status: "member",
-  },
-]
+import { useEffect, useState } from "react";
+import { getMyMusicGroups } from "@/app/lib/actions/music-groups";
+import { MusicGroup } from "@/app/lib/definitions";
+import { useRouter } from 'next/navigation';
 
 const Page = () => {
+  const router = useRouter();
+  const [musicGroups, setMusicGroups] = useState<MusicGroup[] | null>(null);
+  const [apiFeedbackErrors, setApiFeedbackErrors] = useState<string[] | null>(null);
+  const [isAwaitingFetch, setIsAwaitingFetch] = useState(true);
+  
+  useEffect(() => {
+    setIsAwaitingFetch(true);
+    getMyMusicGroups().catch(err => {
+      setIsAwaitingFetch(false);
+      setApiFeedbackErrors(["Sorry, we couldn't fetch your music groups . Something went wrong, please reload page to fetch again."]);
+    }).then((res)=>{
+      //console.log(res);
+      if(res !== void({})) {
+        if (res.status == 'success') {
+          setIsAwaitingFetch(false);
+          setApiFeedbackErrors(null);
+          if (res.data.groups.length > 0) {
+            setMusicGroups(res.data.groups);
+          }
+          else {
+            setMusicGroups(null);
+          }
+        }
+        else {
+          setIsAwaitingFetch(false);
+          setMusicGroups(null);
+          setApiFeedbackErrors(res.error_messages);
+        }
+      }
+    });
+  }, []);
+
+  // function HandleRedirect(groupId: string) {
+  //   router.push(`/dashboard/my-music-groups/${groupId}`);
+  // }  
   return (
     <>
       <div>
@@ -74,28 +78,56 @@ const Page = () => {
             <TableRow>
             </TableRow>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>Group Name</TableHead>
+              {/* <TableHead>Status</TableHead> */}
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {groups.map((name, key) => (
-            <TableRow key={name.name}>
-              <TableCell className="px-2 w-fit whitespace-nowrap">{name.name}</TableCell>
-              <TableCell className="px-2 font-medium">{name.status}</TableCell>
-              <TableCell className="px-2 text-right">
-                <ActionsDropdownMenu title="Actions">
-                  <DropdownMenuItem>
-                    <Link href={'/dashboard/music-group'}>Visit</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={()=> ({})}>
-                    Leave
-                  </DropdownMenuItem>
-                </ActionsDropdownMenu>
-              </TableCell>
-            </TableRow>
-            ))}
+           { (isAwaitingFetch) && (
+            <TableRow><TableCell colSpan={3}>Fetching your music groups...</TableCell></TableRow>
+           )}
+
+           { (!isAwaitingFetch && apiFeedbackErrors == null && musicGroups == null) && (
+            <TableRow><TableCell colSpan={3}>You are currently not a member of any music group.</TableCell></TableRow>
+           )}
+           
+            { ( !isAwaitingFetch && apiFeedbackErrors == null && musicGroups !== null) && (
+              <>
+                {musicGroups.map((musicGroup, key) => (
+                <TableRow key={musicGroup.id}>
+                  <TableCell className="px-2 w-fit whitespace-nowrap">{musicGroup.group_name}</TableCell>
+                  {/* <TableCell className="px-2 font-medium">{musicGroup.group_name}</TableCell> */}
+                  <TableCell className="px-2 text-right">
+                    <ActionsDropdownMenu title="Actions">
+                      <DropdownMenuItem>
+                        <Link href={`/dashboard/my-music-groups/${musicGroup.id}`}>Visit</Link>
+                        {/* Visit */}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={()=> ({})}>
+                        Leave
+                      </DropdownMenuItem>
+                    </ActionsDropdownMenu>
+                  </TableCell>
+                </TableRow>
+                ))}
+              </>
+            )}
+
+            { (!isAwaitingFetch &&  apiFeedbackErrors !== null && musicGroups == null)  &&(
+              <TableRow>
+                <TableCell colSpan={3}>
+                  <ul>
+                   { apiFeedbackErrors.map((apiFeedbackError, key) => (
+                      <li key={key}>
+                        {apiFeedbackError}
+                      </li>
+                    )) }
+                  </ul>
+                </TableCell>
+              </TableRow>
+            )
+            }          
           </TableBody>
         </Table>
       </div>

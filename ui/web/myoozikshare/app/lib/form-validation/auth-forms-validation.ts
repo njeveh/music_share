@@ -7,6 +7,9 @@ export const ValidateField = (field: string, value: string, value2: string|null 
     case 'lastName':
       error = ValidateName(value);
       return error;
+    case 'userName':
+      error = ValidateUserName(value);
+      return error;      
     case 'email':
       error = ValidateEmail(value);
       return error;
@@ -35,6 +38,13 @@ const ValidateName = (name: string): string => {
   return '';
 };
 
+const ValidateUserName = (name: string): string => {
+  if (name.length > 0) {
+    return ValidateName(name);
+  }
+  return '';
+};
+
 const ValidateEmail = (email: string): string => {
   if (email.length == 0) {
     return 'Email field can not be empty!';
@@ -53,7 +63,7 @@ const ValidatePassword = (password: string): string => {
     return 'Password field can not be empty!';
   }
   if (!/^(?=.*\d)(?=.*[a-z])(?=.*[^\w\d])(?=.*[A-Z]).{8,}$/.test(password)) {
-    return "Passwords must be at least 8 characters long and contain at 3 of 4 of the following: upper case (A-Z), lower case (a-z), number (0-9) and special character (e.g. !@#$%^&*)";
+    return "Passwords must be at least 8 characters long and contain at least one of each of the following: upper case (A-Z), lower case (a-z), number (0-9) and special character (e.g. !@#$%^&*)";
   }
   return '';
 };

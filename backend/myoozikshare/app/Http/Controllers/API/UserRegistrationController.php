@@ -24,9 +24,9 @@ class UserRegistrationController extends BaseController
     public function store(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'user_name' => ['sometimes', 'nullable', 'unique:users,user_name', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'min:2', 'max:255'],
+            'last_name' => ['required', 'string', 'min:2', 'max:255'],
+            'user_name' => ['sometimes', 'nullable', 'unique:users,user_name', 'string', 'min:2', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -43,22 +43,23 @@ class UserRegistrationController extends BaseController
                 'user_name' => $request->user_name,
                 'email' => $request->email,
                 'password' => Hash::make($request->string('password')),
+                'is_active' => true,
             ]);
             VerificationCode::create(
                 [
                     'user_id' => $user->id,
-                    'code' => random_int(1001, 9999),
+                    'code' => random_int(100001, 999999),
                     'type' => 'email'
                 ]
             );
+            
             event(new UserRegistered($user));
     
-            $token = $user->createToken('API TOKEN');
+            // $token = $user->createToken('API TOKEN');
             DB::commit();
             $data = [
                 'user' => $user,
-                'has_verified_email' => $user->hasVerifiedEmail(),
-                'token' => $token->plainTextToken,
+                // 'access_token' => $token->plainTextToken,
             ];
             // Log::info($data);
             return $this->respond($data, 'Registration done successfully.');

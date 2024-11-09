@@ -1,11 +1,38 @@
 // This file contains type definitions for data used.
 // It describes the shape of the data, and what data type each property should accept.
 
+export type SignUpData = {
+  firstName: string;
+  lastName: string;
+  userName: string | null;
+  email: string,
+  password: string,
+  passwordConfirmation: string
+};
+
+export type ReturnData = {
+  status: string;
+  data: any;
+  error_messages: Array<string>
+}
+
+export type AuthCredentials = {
+  email: string,
+  password: string,
+  useCase: string,
+};
+
 export type User = {
+    id: string;
     firstName: string;
     lastName: string;
     userName: string;
     email: string;
+    emailVerified: Date | null;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+    accessToken: string;
 };
 
 export type Customer = {
@@ -14,7 +41,12 @@ export type Customer = {
   email: string;
   image_url: string;
 };
-
+export type MusicGroup = {
+  id: string;
+  group_name: string;
+  group_description: string;
+  [key: string]: any
+}
 export type Invoice = {
   id: string;
   customer_id: string;

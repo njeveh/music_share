@@ -7,7 +7,9 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -56,5 +58,21 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function verificationCodes(): HasMany {
         return $this->hasMany(VerificationCode::class);
+    }
+
+    /**
+     * get the music group members associated with this user
+     */
+    public function musicGroupMembers(): HasMany
+    {
+        return $this->hasMany(MusicGroupMember::class);
+    }
+
+    /**
+     * get music groups related to this user
+     */
+    public function musicGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(MusicGroup::class, 'music_group_members');
     }
 }

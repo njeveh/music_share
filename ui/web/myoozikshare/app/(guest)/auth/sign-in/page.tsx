@@ -6,9 +6,10 @@ import TextInput from '@/app/ui/components/input-fields/text-input';
 import Link from 'next/link';
 import { lusitana } from '@/app/ui/fonts';
 import PasswordInput from '@/app/ui/components/input-fields/password-input';
-import { authenticate } from '@/app/lib/actions';
+import { authenticate } from '@/app/lib/actions/auth';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import ActionButton from '@/app/ui/components/action-button';
 
 const Page = () => {
     const [isPending, setIspendning] = useState(false);
@@ -27,19 +28,22 @@ const Page = () => {
       }));
     };
     const HandleSubmit = (e: FormEvent<HTMLFormElement>) => {
-      setIspendning(true);
       e.preventDefault();
+      if (isPending) return;
+      setIspendning(true);
       setErrorMessage('');
       const data = {
         email: inputs.email,
-        password: inputs.password
+        password: inputs.password,
+        useCase: 'signin',
       };
-      authenticate(true, data).catch(err => {
+      authenticate(data).catch(err => {
           setErrorMessage("Sorry, we couldn't process your request. Something went wrong, please try again.");
+          setIspendning(false);
         }).then((res) => {
           setErrorMessage(res);
+          setIspendning(false);
         });
-      setIspendning(false);
     };
   return (
     <>
@@ -66,17 +70,17 @@ const Page = () => {
                     onChange={HandleChange} autoFocus />
                 </div>
                 <div className="mb-4">
-                  <PasswordInput label="Password" type="password" id="password" name="password"
+                  <PasswordInput label="Password" id="password" name="password"
                     placeholder="Enter your password here." required value={inputs.password || '' }
                     onChange={HandleChange} />
                 </div>
                 {/* <div className="mt-4">
                   <Button type="submit" className="w-full" children="Sign In" />
                 </div> */}
-                <Button type='submit' className="mt-4 w-full" aria-disabled={isPending}>
-                  Sign in
+                <ActionButton type='submit' className="mt-4 w-full" disabled={isPending}>
+                  {isPending? 'Signing you in...': 'Sign in'}
                   <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
-                </Button>
+                </ActionButton>
                 <div className="mt-4 flex flex-row flex-wrap gap-4 md:gap-8 justify-center items-center">
                   <div>
                     <Link href="/auth/forgot-password"

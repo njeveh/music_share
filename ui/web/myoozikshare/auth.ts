@@ -1,39 +1,49 @@
-import NextAuth from 'next-auth';
+import NextAuth, { AuthError } from 'next-auth';
 import { authConfig } from './auth.config';
 import Credentials from 'next-auth/providers/credentials';
-import { z } from 'zod';
 import type { User } from '@/app/lib/definitions';
- 
-async function getUser(email: string): Promise<User | undefined> {
-  try {
-    // const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
-    // return user.rows[0];
-    const user = {firstName: 'Elijah', lastName: 'Kilonzi', userName: '', email: 'test@example.com'}
-    return user;
-  } catch (error) {
-    //console.error('Failed to fetch user:', error);
-    throw new Error('Failed to fetch user.');
-  }
-}
- 
-export const { auth, signIn, signOut } = NextAuth({
+  
+export const { auth, signIn, signOut, handlers: { GET, POST } } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
-      async authorize(credentials: any) {
+      async authorize(credentials) {
+        const data = {
+          email: credentials.email,
+          password: credentials.password
+        }
 
-          if (credentials) {
-              if (!credentials.first_name) return null;
-              const user = {
-                firstName: credentials.first_name,
-                lastName: credentials.last_name,
-                userName: credentials.user_name,
-                email: credentials.email,
-                accessToken: credentials.token
-              };
-              return user;
-          }
+        const response = await fetch(`${process.env.BACKEND_API_URL}/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+        const result = await response.json();
+
+        if (response.status == 400) {
           return null;
+        }else if (response.status == 200) {
+          //console.log(result);
+          const userName = result.data.user.user_name == null? undefined : result.data.user.user_name;
+          const user = {
+            id: result.data.user.id,
+            firstName: result.data.user.first_name,
+            lastName: result.data.user.last_name,
+            userName: userName,
+            email: result.data.user.email,
+            emailVerified: result.data.user.email_verified_at,
+            isActive: result.data.user.is_active,
+            createdAt: result.data.user.created_at,
+            updatedAt: result.data.user.updated_at,
+            accessToken: result.data.user.access_token,
+          } as User
+          return user
+        }
+        else {
+          throw new AuthError("");
+        }
       },
     }),
   ],

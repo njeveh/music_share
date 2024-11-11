@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\MusicGroupMember;
 use App\Models\MusicGroupMembershipRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use MarcinOrlowski\ResponseBuilder\BaseApiCodes;
 
 class MusicGroupMembershipRequestController extends BaseController
@@ -40,6 +42,40 @@ class MusicGroupMembershipRequestController extends BaseController
             //throw $th;
         }
     }
+
+    /**
+     * Reply to a membership request.
+     */
+    public function reply(Request $request, $group_id, $request_id)
+    {
+        try {
+            $feedback =  $request->feedback;
+            $membership_request = MusicGroupMembershipRequest::find($request_id);
+            DB::beginTransaction();
+            switch ($feedback) {
+                case 'accepted':
+                    MusicGroupMember::create([
+                        'user_id' => $membership_request->user_id,
+                        'music_group_id' => $membership_request->music_group_id,                        
+                    ]);
+                    MusicGroupMembershipRequest::destroy($request_id);
+                    break;
+                case 'rejected':
+                    $membership_request->status = 'rejected';
+                    $membership_request->save();
+                    break;
+                
+                default:
+                    break;
+            }
+            DB::commit();
+            return $this->respondWithMessage('Membership request feedback successfull');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return $this->respondWithErrorMessage('Membership request feedback failed', BaseApiCodes::EX_UNCAUGHT_EXCEPTION(), 500);
+            //throw $th;
+        }
+    }    
 
     /**
      * Display the specified resource.

@@ -5,6 +5,8 @@ import { SongCard } from '@/app/ui/components/song-card';
 import Link from 'next/link';
 import { ActionsDropdownMenu } from "@/app/ui/components/actions-dropdown-menu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { MusicGroup } from '@/app/lib/definitions';
+import { getMyMusicGroup } from '@/app/lib/actions/music-groups';
 
 export default async function Page({
   params,
@@ -33,7 +35,7 @@ return (
         <SongCard key={key} title='Sifa na Utukufu Vyote ni Kwa Mungu' composer='John M. Doe' link='/dashboard/music-breakdown' />
         );
       })
-    }      
+    }
     </div>
   </div>       
   <Footer />

@@ -5,15 +5,9 @@ import { Spinner } from "../../components/animators";
 import { useState } from "react";
 import { RequestMusicGroupMembership } from "@/app/lib/actions/music-groups";
 
-const ActionsMenu = ({musicGroupId}: {musicGroupId: any}) => {
+const MembershipStatus = ({musicGroupId}: {musicGroupId: any}) => {
 const [isLoading, setIsLoading] = useState(false);
 const [requestStatus, setRequestStatus] = useState('');
-  // const createPageURL = (pageNumber: number | string) => {
-  //   const params = new URLSearchParams(searchParams);
-  //   // params.set('page', `${currentPage}`);
-  //   params.set('page', pageNumber.toString());
-  //   return `${pathname}?${params.toString()}`;
-  // }; 
   
   function handleMusicGroupMembershipRequest(id: any) {
     setIsLoading(true);
@@ -54,4 +48,4 @@ const [requestStatus, setRequestStatus] = useState('');
     </>
   );
 }
-export default ActionsMenu;
+export default MembershipStatus;

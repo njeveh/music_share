@@ -59,7 +59,7 @@ const Page = () => {
   // }  
   return (
     <>
-      <div>
+      <div className="p-2">
         <div className="w-full flex justify-end gap-2">
           <Link href={'/dashboard/music-groups'}>
             <Button>

@@ -42,7 +42,7 @@ const SearchForm = () => {
         <form onSubmit={e => {handleSearch(e)}} className="max-w-2xl flex flex-1 flex-row search-form">
           <div className="w-full relative">
             <input type="text" id="search-input" className="h-10 w-full rounded-tl-lg rounded-bl-lg dark:bg-slate-600 dark:placeholder:text-gray-300"
-              name="searchValue" placeholder="Search for group ..." value={searchValue} onChange={e => {handlechange(e)}} />
+              name="searchValue" placeholder="Search ..." value={searchValue} onChange={e => {handlechange(e)}} />
         { searchValue &&
           <button type="button" onClick={clearSearch}
             className="absolute right-2 top-1/2 h-[28px] w-[28px] -translate-y-1/2 text-gray-500 dark:text-gray-100 peer-focus:text-gray-900"

@@ -56,6 +56,37 @@ export type PaginatedGroupsReturnData = {
   currentPage: number;
   error_messages: Array<string>
 }
+export type MusicGroupMember = {
+  id: string;
+  name: string;
+  is_creator: boolean;
+  is_admin: boolean;
+  is_super_admin: boolean;
+  [key: string]: any
+}
+
+export type PaginatedGroupMembers = {
+  status: string;
+  data: MusicGroupMember | null;
+  totalPages: number;
+  currentPage: number;
+  error_messages: Array<string>
+}
+
+export type MusicGroupMembershipRequest = {
+  id: string;
+  name: string;
+  status: string;
+  [key: string]: any
+}
+
+export type PaginatedGroupMembershipRequest = {
+  status: string;
+  data: MusicGroupMembershipRequest | null;
+  totalPages: number;
+  currentPage: number;
+  error_messages: Array<string>
+}
 
 export type Invoice = {
   id: string;

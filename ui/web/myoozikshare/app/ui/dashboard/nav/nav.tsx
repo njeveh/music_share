@@ -57,7 +57,7 @@ const Nav = () => {
       setIsOpen(!isOpen);
   };
 return (
-<nav className="sticky top-0 w-full px-4 border-b z-10 bg-gray-50 dark:bg-darkmenubg">
+<nav className="sticky top-0 w-full px-4 border-b z-20 bg-gray-50 dark:bg-darkmenubg">
   <div className="flex w-full items-center justify-between py-2">
     <div className="flex items-center">
       <button className="mr-4" aria-label="Open Menu" onClick={handleDrawer}>

@@ -1,0 +1,43 @@
+"use client";
+
+import Link from 'next/link';
+import * as React from "react"
+import { DotsVerticalIcon } from "@radix-ui/react-icons"
+import { useTheme } from "next-themes"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { MusicGroup } from '@/app/lib/definitions';
+const GroupActionsMenu = ({slug, musicGroup} : {slug: any; musicGroup: MusicGroup}) => {
+  return (
+    <>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+          <button type='button' className='flex flex-col justify-center items-center gap-2'>
+            <DotsVerticalIcon className='text-2xl w-8 h-8' />
+            {/* <div className='w-[4px] h-[4px] bg-black dark:bg-white rounded-full'></div>
+            <div className='w-[4px] h-[4px] bg-black dark:bg-white rounded-full'></div>
+            <div className='w-[4px] h-[4px] bg-black dark:bg-white rounded-full'></div> */}
+          </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        {musicGroup.is_admin && 
+          <DropdownMenuItem>
+            <Link href={`/dashboard/my-music-groups/${slug}/members/requests`}>Membership requests</Link>
+          </DropdownMenuItem>
+        }
+        <DropdownMenuItem>
+          <Link href={`/dashboard/my-music-groups/${slug}/members`}>Members</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>Leave</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+    </>
+  );
+}
+
+export default GroupActionsMenu;

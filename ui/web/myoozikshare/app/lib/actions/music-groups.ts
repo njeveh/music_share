@@ -1,7 +1,7 @@
 'use server'
 
 import { auth } from "@/auth";
-import { PaginatedGroupsReturnData, ReturnData } from "../definitions";
+import { MusicGroup, PaginatedGroupMembers, PaginatedGroupMembershipRequest, PaginatedGroupsReturnData, ReturnData } from "../definitions";
 
 let returnData: ReturnData = {
     status: '',
@@ -16,6 +16,7 @@ let paginatedGroupsReturnData: PaginatedGroupsReturnData = {
     currentPage: 1,
     error_messages: []
 }
+
 
 export async function createMusicGroup(data: {groupName: string; groupDescription: string; groupContact: string})                                                                                                           {
   try {
@@ -135,11 +136,7 @@ export async function getFilteredMusicGroups(
     const result = await response.json();
     //console.log(result.data);
 
-    if (response.status == 200) {          
-      // console.log(result);
-      //console.log(result.data.groups);
-      // console.log(result.data.groups.last_page);
-      // console.log(result.data.groups.current_page);               
+    if (response.status == 200) {                        
       let groups = null;
       let totalPages = 0;
       let currentPage = 0;
@@ -247,7 +244,7 @@ export async function RequestMusicGroupMembership(id: any): Promise<ReturnData> 
       returnData = {
         status: 'fail',
         data: {},
-        error_messages: ["Sorry, we couldn't fetch your music groups. Something went wrong, please reload page to fetch again."]
+        error_messages: ["Sorry, we couldn't process your request. Something went wrong, please reload page to fetch again."]
       }
     }
     return returnData;
@@ -255,7 +252,225 @@ export async function RequestMusicGroupMembership(id: any): Promise<ReturnData> 
       returnData = {
         status: 'fail',
         data: {},
-        error_messages: ["Sorry, we couldn't fetch your music groups . Something went wrong, please reload page to fetch again."]
+        error_messages: ["Sorry, we couldn't process your request. Something went wrong, please reload page to fetch again."]
+      }
+      return returnData;
+  }    
+}
+
+export async function getMyMusicGroup(id: any): Promise<MusicGroup> {
+  try {
+    const session = await auth().then(res=>{return res});
+    const token = session?.user.accessToken;
+    const response = await fetch(`${process.env.BACKEND_API_URL}/music-groups/my-music-groups/${id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+    //console.log(response.status);
+    const result = await response.json();
+    //console.log(result.data.group);
+
+    if (response.status == 200) {
+      return result.data.group
+    }
+    else {
+      throw new Error('');
+    }
+  } catch (error) {
+    throw error;
+  }    
+}
+
+export async function getFilteredMusicGroupMembers(
+  id: any,
+  query: string,
+  currentPage: number,
+): Promise<PaginatedGroupMembers> {
+
+  let paginatedGroupMembers: PaginatedGroupMembers = {
+    status: '',
+    data: null,
+    totalPages: 1,
+    currentPage: 1,
+    error_messages: []
+  }
+
+  try {
+    const session = await auth().then(res=>{return res});
+    const token = session?.user.accessToken;
+    const response = await fetch(`${process.env.BACKEND_API_URL}/music-groups/my-music-groups/${id}/members?query=${query}&page=${currentPage}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+    // console.log(response.status);
+    const result = await response.json();
+    // console.log(result.data);
+
+    if (response.status == 200) {          
+
+      let members = null;
+      let totalPages = 0;
+      let currentPage = 0;
+      if (result.data.members.data.length > 0) {
+        members = result.data.members.data;
+        totalPages = result.data.members.last_page;
+        currentPage = result.data.members.current_page;
+      }
+      paginatedGroupMembers = {
+        status: 'success',
+        data: members,
+        totalPages: totalPages,
+        currentPage: currentPage,
+        error_messages: []
+      }
+      return paginatedGroupMembers;
+    }
+    else {
+      throw new Error();
+      paginatedGroupMembers = {
+        status: 'fail',
+        data: null,
+        totalPages: 1,
+        currentPage: 1,
+        error_messages: ["Sorry, we couldn't process your request. Something went wrong, please reload page to fetch again."]
+      }
+      return paginatedGroupMembers;
+    }
+  } catch (error) {
+    throw error;
+      paginatedGroupMembers = {
+        status: 'fail',
+        data: null,
+        totalPages: 1,
+        currentPage: 1,
+        error_messages: ["Sorry, we couldn't process your request. Something went wrong, please reload page to fetch again."]
+      }
+      return paginatedGroupMembers;
+  }    
+}
+
+
+export async function getFilteredMusicGroupMembershipRequests(
+  id: any,
+  query: string,
+  currentPage: number,
+): Promise<PaginatedGroupMembershipRequest> {
+
+  let paginatedGroupMembershipRequests: PaginatedGroupMembershipRequest = {
+    status: '',
+    data: null,
+    totalPages: 1,
+    currentPage: 1,
+    error_messages: []
+  }
+
+  try {
+    const session = await auth().then(res=>{return res});
+    const token = session?.user.accessToken;
+    const response = await fetch(`${process.env.BACKEND_API_URL}/music-groups/my-music-groups/${id}/members/requests?query=${query}&page=${currentPage}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+    // console.log(response.status);
+    const result = await response.json();
+    // console.log(result.data);
+
+    if (response.status == 200) {          
+
+      let requests = null;
+      let totalPages = 0;
+      let currentPage = 0;
+      if (result.data.requests.data.length > 0) {
+        requests = result.data.requests.data;
+        totalPages = result.data.requests.last_page;
+        currentPage = result.data.requests.current_page;
+      }
+      paginatedGroupMembershipRequests = {
+        status: 'success',
+        data: requests,
+        totalPages: totalPages,
+        currentPage: currentPage,
+        error_messages: []
+      }
+      return paginatedGroupMembershipRequests;
+    }
+    else {
+      throw new Error();
+      paginatedGroupMembershipRequests = {
+        status: 'fail',
+        data: null,
+        totalPages: 1,
+        currentPage: 1,
+        error_messages: ["Sorry, we couldn't process your request. Something went wrong, please reload page to fetch again."]
+      }
+      return paginatedGroupMembershipRequests;
+    }
+  } catch (error) {
+    throw error;
+      paginatedGroupMembershipRequests = {
+        status: 'fail',
+        data: null,
+        totalPages: 1,
+        currentPage: 1,
+        error_messages: ["Sorry, we couldn't process your request. Something went wrong, please reload page to fetch again."]
+      }
+      return paginatedGroupMembershipRequests;
+  }    
+}
+
+export async function HandleMusicGroupMembershipRequestFeedback(slug: any, id: any, feedback: string): Promise<ReturnData> {
+      //   returnData = {
+      //   status: 'fail',
+      //   data: {},
+      //   error_messages: ["Sorry, we couldn't process your request. Something went wrong, please reload page to fetch again."]
+      // }
+      // return returnData;
+  let postData = {
+    feedback: feedback
+  }
+  try {
+    const session = await auth().then(res=>{return res});
+    const token = session?.user.accessToken;
+    const response = await fetch(`${process.env.BACKEND_API_URL}/music-groups/my-music-groups/${slug}/members/requests/${id}/reply`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(postData),
+    });
+    // console.log(response);
+    // console.log(response.status);
+    const result = await response.json();
+    //console.log(result.data);
+
+    if (response.status == 200) {
+      //console.log(result);
+      returnData = {
+        status: 'success',
+        data: {},
+        error_messages: []
+      }
+    }
+    else {
+      returnData = {
+        status: 'fail',
+        data: {},
+        error_messages: ["Sorry, we couldn't process your request. Something went wrong, please reload page to fetch again."]
+      }
+    }
+    return returnData;
+  } catch (error) {
+      returnData = {
+        status: 'fail',
+        data: {},
+        error_messages: ["Sorry, we couldn't process your request. Something went wrong, please reload page to fetch again."]
       }
       return returnData;
   }    

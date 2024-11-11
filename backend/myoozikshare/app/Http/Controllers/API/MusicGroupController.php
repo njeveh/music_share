@@ -33,11 +33,9 @@ class MusicGroupController extends BaseController
     public function getFilteredMusicGroups(Request $request)
     {
         $my_groups_ids = [];
-        // $groups =  MusicGroup::whereLike('name', $request->query)->get();
         $my_groups_ids = $request->user()->musicGroups()->get()?->modelKeys();
         $groups = MusicGroup::whereLike('group_name', '%'.$request->query('query').'%')
-        // ->whereNotIn('id', $my_groups_ids)
-        ->paginate(20);
+        ->paginate(50);
         foreach ($groups as $key => $group) {
             $membership_request_status = '---------';
             $is_a_member =  in_array($group->id, $my_groups_ids);
@@ -125,7 +123,29 @@ class MusicGroupController extends BaseController
      */
     public function show(MusicGroup $musicGroup)
     {
-        //
+        // $groups =  $request->user()->musicGroups;
+        // $data = [
+        //     'groups' => $groups
+        // ];
+        // return $this->respond($data);
+    }
+
+    /**
+     * Display the specified group belonging to the requesting user.
+     */
+    public function showMymusicGroup(Request $request, $id)
+    {
+        $user = $request->user();
+        $group =  MusicGroup::find($id);
+        $member = $group->musicGroupMembers()->where('user_id', $user->id)->first();
+        $admin = $member->musicGroupAdmin;
+        $group->is_creator = $group->musicGroupMembers()?->where('is_creator', true)->where('user_id', $user->id)->exists();
+        $group->is_admin = $admin? true : false;
+        $group->is_super_admin = $admin?->is_super_sdmin? true : false;
+        $data = [
+            'group' => $group
+        ];
+        return $this->respond($data);
     }
 
     /**
@@ -136,6 +156,50 @@ class MusicGroupController extends BaseController
         $groups =  $request->user()->musicGroups;
         $data = [
             'groups' => $groups
+        ];
+        return $this->respond($data);
+    }
+
+    /**
+     * get filtered music group members.
+     */
+    public function getFilteredMusicGroupMembers(Request $request, $id)
+    {
+        $music_group = MusicGroup::find($id);
+        $filtered_music_group_members = $music_group->musicGroupMembers()
+        ->whereLike(['user.first_name', 'user.last_name', 'user.user_name'], $request->query('query') ?? '')
+        ->paginate(50);
+        foreach ($filtered_music_group_members as $key => $member) {
+            $is_admin = false;
+            $is_super_admin = false;
+            $is_admin = $member->musicGroupAdmin? true: false;
+            if ($is_admin) {
+                $is_super_admin = $member->musicGroupAdmin?->is_super_admin? true: false;
+            }
+            $member->name = $member->user->user_name? $member->user->user_name:  $member->user->first_name.' '.$member->user->last_name;
+            $member->is_admin = $is_admin;
+            $member->is_super_admin = $is_super_admin;
+        }
+        $data = [
+            'members' => $filtered_music_group_members
+        ];
+        return $this->respond($data);
+    }
+    
+   /**
+     * get filtered music group members.
+     */
+    public function getFilteredMusicGroupMembershipRequests(Request $request, $id)
+    {
+        $music_group = MusicGroup::find($id);
+        $filtered_music_group_membership_requests = $music_group->musicGroupMembershipRequests()
+        ->whereLike(['user.first_name', 'user.last_name', 'user.user_name'], $request->query('query') ?? '')
+        ->paginate(50);
+        foreach ($filtered_music_group_membership_requests as $key => $request) {
+            $request->name = $request->user->user_name? $request->user->user_name:  $request->user->first_name.' '.$request->user->last_name;
+        }
+        $data = [
+            'requests' => $filtered_music_group_membership_requests
         ];
         return $this->respond($data);
     }    

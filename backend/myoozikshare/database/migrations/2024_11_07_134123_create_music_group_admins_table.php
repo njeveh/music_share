@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('music_group_admins', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('music_group_member_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('music_group_member_id')->unique()->constrained()->cascadeOnDelete();
             $table->boolean('is_super_admin')->default(false);
             $table->string('roles')->nullable();//manage_members? manage_music?
         });

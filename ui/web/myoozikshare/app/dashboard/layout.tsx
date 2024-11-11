@@ -12,7 +12,7 @@ export default async function DashboardLayout(
 return (
   <>
     <Nav />
-    <main className="flex flex-col p-2 pb-[100px]">
+    <main className="flex flex-col pb-[100px]">
       {children}
     </main>
     <Footer />

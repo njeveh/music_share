@@ -37,6 +37,10 @@ Route::middleware(['ensure_json_response'])->group(function (){
         Route::get('/music-groups', [MusicGroupController::class, 'getFilteredMusicGroups']);
         Route::get('/music-groups/my-music-groups', [MusicGroupController::class, 'getUserMusicGroups']);
         Route::get('/music-groups/{id}', [MusicGroupController::class, 'show']);
+        Route::get('/music-groups/my-music-groups/{id}', [MusicGroupController::class, 'showMymusicGroup']);
+        Route::get('/music-groups/my-music-groups/{id}/members/requests', [MusicGroupController::class, 'getFilteredMusicGroupMembershipRequests']);
+        Route::post('/music-groups/my-music-groups/{group_id}/members/requests/{request_id}/reply', [MusicGroupMembershipRequestController::class, 'reply']);
+        Route::get('/music-groups/my-music-groups/{id}/members', [MusicGroupController::class, 'getFilteredMusicGroupMembers']);
         Route::get('/music-groups/{id}/request-membership', [MusicGroupMembershipRequestController::class, 'store']);
     });
 });

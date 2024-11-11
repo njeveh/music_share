@@ -1,11 +1,19 @@
 'use server'
 
 import { auth } from "@/auth";
-import { ReturnData } from "../definitions";
+import { PaginatedGroupsReturnData, ReturnData } from "../definitions";
 
 let returnData: ReturnData = {
     status: '',
     data: null,
+    error_messages: []
+}
+
+let paginatedGroupsReturnData: PaginatedGroupsReturnData = {
+    status: '',
+    data: null,
+    totalPages: 1,
+    currentPage: 1,
     error_messages: []
 }
 
@@ -109,6 +117,70 @@ export async function getMusicGroups(): Promise<ReturnData> {
   }    
 }
 
+export async function getFilteredMusicGroups(
+  query: string,
+  currentPage: number,
+): Promise<PaginatedGroupsReturnData> {
+  //throw new Error();
+  try {
+    const session = await auth().then(res=>{return res});
+    const token = session?.user.accessToken;
+    const response = await fetch(`${process.env.BACKEND_API_URL}/music-groups?query=${query}&page=${currentPage}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+    //console.log(response.status);
+    const result = await response.json();
+    //console.log(result.data);
+
+    if (response.status == 200) {          
+      // console.log(result);
+      //console.log(result.data.groups);
+      // console.log(result.data.groups.last_page);
+      // console.log(result.data.groups.current_page);               
+      let groups = null;
+      let totalPages = 0;
+      let currentPage = 0;
+      if (result.data.groups.data.length > 0) {
+        groups = result.data.groups.data;
+        totalPages = result.data.groups.last_page;
+        currentPage = result.data.groups.current_page;
+      }
+      paginatedGroupsReturnData = {
+        status: 'success',
+        data: groups,
+        totalPages: totalPages,
+        currentPage: currentPage,
+        error_messages: []
+      }
+      return paginatedGroupsReturnData;
+    }
+    else {
+      throw new Error();
+      paginatedGroupsReturnData = {
+        status: 'fail',
+        data: null,
+        totalPages: 1,
+        currentPage: 1,
+        error_messages: ["Sorry, we couldn't fetch your music groups. Something went wrong, please reload page to fetch again."]
+      }
+      return paginatedGroupsReturnData;
+    }
+  } catch (error) {
+    throw error;
+      paginatedGroupsReturnData = {
+        status: 'fail',
+        data: null,
+        totalPages: 1,
+        currentPage: 1,
+        error_messages: ["Sorry, we couldn't fetch your music groups . Something went wrong, please reload page to fetch again."]
+      }
+      return paginatedGroupsReturnData;
+  }    
+}
+
 export async function getMyMusicGroups(): Promise<ReturnData> {
   try {
     const session = await auth().then(res=>{return res});
@@ -128,6 +200,46 @@ export async function getMyMusicGroups(): Promise<ReturnData> {
       returnData = {
         status: 'success',
         data: result.data,
+        error_messages: []
+      }
+    }
+    else {
+      returnData = {
+        status: 'fail',
+        data: {},
+        error_messages: ["Sorry, we couldn't fetch your music groups. Something went wrong, please reload page to fetch again."]
+      }
+    }
+    return returnData;
+  } catch (error) {
+      returnData = {
+        status: 'fail',
+        data: {},
+        error_messages: ["Sorry, we couldn't fetch your music groups . Something went wrong, please reload page to fetch again."]
+      }
+      return returnData;
+  }    
+}
+
+export async function RequestMusicGroupMembership(id: any): Promise<ReturnData> {
+  try {
+    const session = await auth().then(res=>{return res});
+    const token = session?.user.accessToken;
+    const response = await fetch(`${process.env.BACKEND_API_URL}/music-groups/${id}/request-membership`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+    //console.log(response.status);
+    const result = await response.json();
+    //console.log(result.data);
+
+    if (response.status == 200) {
+      //console.log(result);
+      returnData = {
+        status: 'success',
+        data: {},
         error_messages: []
       }
     }

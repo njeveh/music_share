@@ -24,6 +24,14 @@ class MusicGroup extends Model
     ];
 
     /**
+     * get music group membership requests associated with this group
+     */
+    public function musicGroupMembershipRequests(): HasMany
+    {
+        return $this->hasMany(MusicGroupMembershipRequest::class);
+    }    
+
+    /**
      * get music group members
      */
     public function musicGroupMembers(): HasMany

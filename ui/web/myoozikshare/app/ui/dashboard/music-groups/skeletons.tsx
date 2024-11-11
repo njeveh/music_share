@@ -11,7 +11,7 @@ export function TableRowSkeleton() {
         <div className="w-full flex justify-between items-center">
           {/* Group Name */}
           <div className="w-1/2 h-5 rounded bg-gray-100 dark:bg-gray-900"></div>
-          {/* Actions */}
+          {/* Group Membership status */}
           <div className="bg-white dark:bg-gray-700 h-9 w-24 px-4 py-2 border border-gray-100 rounded-lg">
             <div className="w-16 h-5 bg-gray-100 dark:bg-gray-900"></div>
           </div>
@@ -89,15 +89,15 @@ export function MusicGroupsPageSkeleton() {
           </button>
         </form>
       </div>
-    <div className="w-full my-2 flex justify-center items-center text-2xl font-bold">Available Music Groups</div>
+    <div className="w-full my-2 flex justify-center items-center text-2xl font-bold">Music Groups</div>
     <Table className="relative table-auto">
       <TableHeader>
         <TableRow>
         </TableRow>
-        <TableRow>
-          <TableHead>Group Name</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
-        </TableRow>
+          <TableRow className="bg-black text-white">
+            <TableHead className="text-white dark:text-amber-500">Group Name</TableHead>
+            <TableHead className="text-right text-white dark:text-amber-500">Membership Status</TableHead>
+          </TableRow>
       </TableHeader>
       <TableBody>
         <TableRowSkeleton />

@@ -3,33 +3,55 @@ import {
   TableCell,
   TableRow,
 } from "@/components/ui/table"
-import { getMusicGroups } from "@/app/lib/actions/music-groups";
-import { MusicGroup } from "@/app/lib/definitions";
+import { getFilteredMusicGroups, getMusicGroups } from "@/app/lib/actions/music-groups";
+import { MusicGroup, PaginatedGroupsReturnData } from "@/app/lib/definitions";
 import ActionsMenu from "./actions-menu";
+import Pagination from "./pagination";
 
-const MusicGroupsTableBody = async () => {
-    const musicGroups: MusicGroup[] | null = (await getMusicGroups()).data;
+const MusicGroupsTableBody = async ({
+  query,
+  currentPage,
+}: {
+  query: string;
+  currentPage: number;
+}) => {
+  const musicGroups: PaginatedGroupsReturnData | null = (await getFilteredMusicGroups(query, currentPage));
+    // const musicGroups: MusicGroup[] | null = (await getMusicGroups()).data;
+
+
+  function handleMusicGroupMembershipRequest() {
+    
+  }
   return (
     <>
       <TableBody>
         { (musicGroups == null) && (
         <TableRow>
-          <TableCell colSpan={3}>There are no music groups available currently.</TableCell>
+          <TableCell colSpan={2}>There are no music groups available currently.</TableCell>
         </TableRow>
         )}
 
-        { ( musicGroups !== null) && (
-        <>
-          {musicGroups.map((musicGroup, key) => (
-          <TableRow key={musicGroup.id}>
-            <TableCell className="px-2 w-fit whitespace-nowrap">{musicGroup.group_name}</TableCell>
-            {/* <TableCell className="px-2 font-medium">{musicGroup.group_name}</TableCell> */}
-            <TableCell className="px-2 text-right">
-              <ActionsMenu musicGroup={musicGroup} />
-            </TableCell>
-          </TableRow>
-          ))}
-        </>
+        { ( musicGroups.data !== null) && (
+          <>
+            {musicGroups.data.map((musicGroup: MusicGroup, key: any) => (
+            <TableRow key={musicGroup.id}>
+              <TableCell className="px-2 w-fit whitespace-normal">{musicGroup.group_name}</TableCell>
+              <TableCell className="px-2 text-right">
+                {musicGroup.is_a_member? <span className="text-green-500">Member</span> :
+                  musicGroup.membership_request_status == 'denied'? <span className="text-red-500">Requested; Denied</span> :
+                  musicGroup.membership_request_status == 'pending'? <span className="text-gray-400 dark:text-gray-300">Requested; Pending</span> : <ActionsMenu musicGroupId={musicGroup.id} />
+                }
+                </TableCell>
+            </TableRow>
+            ))}
+            <TableRow>
+              <TableCell colSpan={2}>
+                <div className="mt-5 flex w-full justify-center">
+                  <Pagination totalPages={musicGroups.totalPages} currentPage={currentPage} />
+                </div>
+              </TableCell>
+            </TableRow>
+          </>
         )}
       </TableBody>
     </>

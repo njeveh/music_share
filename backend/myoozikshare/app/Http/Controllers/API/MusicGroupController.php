@@ -28,6 +28,40 @@ class MusicGroupController extends BaseController
     }
 
     /**
+     * get filtered music groups.
+     */
+    public function getFilteredMusicGroups(Request $request)
+    {
+        $my_groups_ids = [];
+        // $groups =  MusicGroup::whereLike('name', $request->query)->get();
+        $my_groups_ids = $request->user()->musicGroups()->get()?->modelKeys();
+        $groups = MusicGroup::whereLike('group_name', '%'.$request->query('query').'%')
+        // ->whereNotIn('id', $my_groups_ids)
+        ->paginate(20);
+        foreach ($groups as $key => $group) {
+            $membership_request_status = '---------';
+            $is_a_member =  in_array($group->id, $my_groups_ids);
+            if (!$is_a_member){
+                $my_membership_pending_groups_ids = $request->user()->requestedMembershipMusicGroups()?->where('status', 'pending')->get()?->modelKeys();
+                $my_membership_denied_groups_ids = $request->user()->requestedMembershipMusicGroups()?->where('status', 'denied')->get()?->modelKeys();
+                $membership_request_denied = in_array($group->id, $my_membership_denied_groups_ids);
+                $membership_request_pending = in_array($group->id, $my_membership_pending_groups_ids) && !$membership_request_denied;
+                if ($membership_request_denied) {
+                    $membership_request_status =  'denied';
+                }elseif ($membership_request_pending) {
+                    $membership_request_status =  'pending';
+                }
+            }
+            $group->is_a_member = $is_a_member;
+            $group->membership_request_status = $membership_request_status;
+        }
+        $data = [
+            'groups' => $groups
+        ];
+        return $this->respond($data);
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()

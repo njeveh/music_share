@@ -61,11 +61,27 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * get music group membership requests associated with this user
+     */
+    public function musicGroupMembershipRequests(): HasMany
+    {
+        return $this->hasMany(MusicGroupMembershipRequest::class);
+    }    
+
+    /**
      * get the music group members associated with this user
      */
     public function musicGroupMembers(): HasMany
     {
         return $this->hasMany(MusicGroupMember::class);
+    }
+
+    /**
+     * get music groups whose membership this user has requested
+     */
+    public function requestedMembershipMusicGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(MusicGroup::class, 'music_group_membership_requests');
     }
 
     /**

@@ -16,6 +16,7 @@ export type ReturnData = {
   error_messages: Array<string>
 }
 
+
 export type AuthCredentials = {
   email: string,
   password: string,
@@ -47,6 +48,15 @@ export type MusicGroup = {
   group_description: string;
   [key: string]: any
 }
+
+export type PaginatedGroupsReturnData = {
+  status: string;
+  data: MusicGroup | null;
+  totalPages: number;
+  currentPage: number;
+  error_messages: Array<string>
+}
+
 export type Invoice = {
   id: string;
   customer_id: string;

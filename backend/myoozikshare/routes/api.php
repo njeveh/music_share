@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\AuthenticatedSessionController;
 use App\Http\Controllers\API\EmailVerificationController;
 use App\Http\Controllers\API\MusicGroupController;
+use App\Http\Controllers\API\MusicGroupMembershipRequestController;
 use App\Http\Controllers\API\NewPasswordController;
 use App\Http\Controllers\API\PasswordResetController;
 use App\Http\Controllers\API\ProfileController;
@@ -32,8 +33,10 @@ Route::middleware(['ensure_json_response'])->group(function (){
         Route::post('/delete-user-account', [ProfileController::class, 'destroy']);
         // Routes to manage Music groups
         Route::post('/music-groups/create', [MusicGroupController::class, 'store']);
-        Route::get('/music-groups', [MusicGroupController::class, 'index']);
+        // Route::get('/music-groups', [MusicGroupController::class, 'index']);
+        Route::get('/music-groups', [MusicGroupController::class, 'getFilteredMusicGroups']);
         Route::get('/music-groups/my-music-groups', [MusicGroupController::class, 'getUserMusicGroups']);
         Route::get('/music-groups/{id}', [MusicGroupController::class, 'show']);
+        Route::get('/music-groups/{id}/request-membership', [MusicGroupMembershipRequestController::class, 'store']);
     });
 });

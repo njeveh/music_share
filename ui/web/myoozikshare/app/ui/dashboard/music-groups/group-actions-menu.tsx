@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { MusicGroup } from '@/app/lib/definitions';
+import LeaveGroupButton from './leave-group-button';
 const GroupActionsMenu = ({slug, musicGroup} : {slug: any; musicGroup: MusicGroup}) => {
   return (
     <>
@@ -19,21 +20,26 @@ const GroupActionsMenu = ({slug, musicGroup} : {slug: any; musicGroup: MusicGrou
       <DropdownMenuTrigger asChild>
           <button type='button' className='flex flex-col justify-center items-center gap-2'>
             <DotsVerticalIcon className='text-2xl w-8 h-8' />
-            {/* <div className='w-[4px] h-[4px] bg-black dark:bg-white rounded-full'></div>
-            <div className='w-[4px] h-[4px] bg-black dark:bg-white rounded-full'></div>
-            <div className='w-[4px] h-[4px] bg-black dark:bg-white rounded-full'></div> */}
           </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {musicGroup.is_admin && 
-          <DropdownMenuItem>
-            <Link href={`/dashboard/my-music-groups/${slug}/members/requests`}>Membership requests</Link>
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem>
+              <Link href={`/dashboard/my-music-groups/${slug}/members/requests`}>Membership requests</Link>
+            </DropdownMenuItem>        
+          </>
         }
         <DropdownMenuItem>
           <Link href={`/dashboard/my-music-groups/${slug}/members`}>Members</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>Leave</DropdownMenuItem>
+        {musicGroup.is_admin && 
+          <>
+            <DropdownMenuItem>
+              <Link href={`/dashboard/my-music-groups/${slug}/settings`}>Settings</Link>
+            </DropdownMenuItem>          
+          </>
+        }        
       </DropdownMenuContent>
     </DropdownMenu>
     </>

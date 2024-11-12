@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use MarcinOrlowski\ResponseBuilder\BaseApiCodes;
 
 class MusicGroupController extends BaseController
@@ -139,9 +140,10 @@ class MusicGroupController extends BaseController
         $group =  MusicGroup::find($id);
         $member = $group->musicGroupMembers()->where('user_id', $user->id)->first();
         $admin = $member->musicGroupAdmin;
+        $group->member_id = $member->id;
         $group->is_creator = $group->musicGroupMembers()?->where('is_creator', true)->where('user_id', $user->id)->exists();
         $group->is_admin = $admin? true : false;
-        $group->is_super_admin = $admin?->is_super_sdmin? true : false;
+        $group->is_super_admin = $admin?->is_super_admin? true : false;
         $data = [
             'group' => $group
         ];
@@ -168,6 +170,7 @@ class MusicGroupController extends BaseController
         $music_group = MusicGroup::find($id);
         $filtered_music_group_members = $music_group->musicGroupMembers()
         ->whereLike(['user.first_name', 'user.last_name', 'user.user_name'], $request->query('query') ?? '')
+        ->where('user_id', '!=' , $request->user()->id)
         ->paginate(50);
         foreach ($filtered_music_group_members as $key => $member) {
             $is_admin = false;
@@ -215,16 +218,58 @@ class MusicGroupController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, MusicGroup $musicGroup)
+    public function update(Request $request, $id)
     {
-        //
+        $music_group = MusicGroup::find($id);
+        //Log::info($request);
+        $validator = Validator::make($request->all(), [
+            'group_name' => ['required', 'string', 'min:2', 'max:255', Rule::unique('music_groups', 'group_name')->ignore($id)],
+            'group_description' => ['nullable', 'string'],
+            'group_contact' => ['nullable', 'string'],
+        ]);
+
+        if ($validator->fails()) {
+            $error_messages = $validator->errors()->all();
+            return $this->respondWithValidationErrors($error_messages, BaseApiCodes::EX_VALIDATION_EXCEPTION(), 403);
+        }
+        try {
+            // $music_group = MusicGroup::find($id);
+            $music_group->update([
+                'group_name' => $request->group_name,
+                'group_description' => $request->group_description,
+                'group_contact' => $request->group_contact,
+            ]);
+
+            $data = [
+                'music_group' => $music_group,
+            ];
+            //Log::info($data);
+            return $this->respond($data, 'group updated successfully.');
+        } catch (\Throwable $th) {
+            //Log::info($th);
+            return $this->respondWithErrorMessage('Sorry something went wrong, please try again.', BaseApiCodes::EX_UNCAUGHT_EXCEPTION(), 500);
+            //throw $th;
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MusicGroup $musicGroup)
+    public function destroy(Request $request, $id)
     {
-        //
+        try {
+            $validator = Validator::make($request->all(), [
+                'password' => ['required', 'current_password'],
+            ]);
+
+            if ($validator->fails()) {
+                return $this->respondWithValidationErrors('Invalid password.', BaseApiCodes::EX_VALIDATION_EXCEPTION(), 403);
+            }
+            MusicGroup::destroy($id);
+            return $this->respondWithMessage('Music group deleted successfully.');
+        } catch (\Throwable $th) {
+            //Log::info($th);
+            return $this->respondWithError(BaseApiCodes::EX_UNCAUGHT_EXCEPTION(), 500);
+        }
     }
 }

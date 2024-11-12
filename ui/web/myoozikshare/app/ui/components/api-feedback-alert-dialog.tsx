@@ -16,7 +16,7 @@ import { useRef } from "react";
 
 const ApiFeedbackAlertDialog = (
     {apiFeedback, alertDialogTrigger} :
-  {apiFeedback: {messages: string[], status: string}, alertDialogTrigger: React.RefObject<HTMLButtonElement>}
+  {apiFeedback: {messages: string[], status: string}, alertDialogTrigger: React.RefObject<HTMLButtonElement | null>}
 ) => {
   return (
     <>

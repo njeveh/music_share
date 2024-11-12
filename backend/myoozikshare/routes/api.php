@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\AuthenticatedSessionController;
 use App\Http\Controllers\API\EmailVerificationController;
 use App\Http\Controllers\API\MusicGroupController;
+use App\Http\Controllers\API\MusicGroupMemberController;
 use App\Http\Controllers\API\MusicGroupMembershipRequestController;
 use App\Http\Controllers\API\NewPasswordController;
 use App\Http\Controllers\API\PasswordResetController;
@@ -30,7 +31,7 @@ Route::middleware(['ensure_json_response'])->group(function (){
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
         Route::post('/update-profile', [ProfileController::class, 'update']);
         Route::post('/change-password', [NewPasswordController::class, 'store']);
-        Route::post('/delete-user-account', [ProfileController::class, 'destroy']);
+        Route::delete('/delete-user-account', [ProfileController::class, 'destroy']);
         // Routes to manage Music groups
         Route::post('/music-groups/create', [MusicGroupController::class, 'store']);
         // Route::get('/music-groups', [MusicGroupController::class, 'index']);
@@ -38,9 +39,12 @@ Route::middleware(['ensure_json_response'])->group(function (){
         Route::get('/music-groups/my-music-groups', [MusicGroupController::class, 'getUserMusicGroups']);
         Route::get('/music-groups/{id}', [MusicGroupController::class, 'show']);
         Route::get('/music-groups/my-music-groups/{id}', [MusicGroupController::class, 'showMymusicGroup']);
+        Route::put('/music-groups/my-music-groups/{id}/update', [MusicGroupController::class, 'update']);
+        Route::delete('/music-groups/my-music-groups/{id}/delete', [MusicGroupController::class, 'destroy']);         
+        Route::get('/music-groups/{id}/request-membership', [MusicGroupMembershipRequestController::class, 'store']);
         Route::get('/music-groups/my-music-groups/{id}/members/requests', [MusicGroupController::class, 'getFilteredMusicGroupMembershipRequests']);
         Route::post('/music-groups/my-music-groups/{group_id}/members/requests/{request_id}/reply', [MusicGroupMembershipRequestController::class, 'reply']);
         Route::get('/music-groups/my-music-groups/{id}/members', [MusicGroupController::class, 'getFilteredMusicGroupMembers']);
-        Route::get('/music-groups/{id}/request-membership', [MusicGroupMembershipRequestController::class, 'store']);
+        Route::post('/music-groups/my-music-groups/{group_id}/members/{member_id}/actions', [MusicGroupMemberController::class, 'act']);
     });
 });

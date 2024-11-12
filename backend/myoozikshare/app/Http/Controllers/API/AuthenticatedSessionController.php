@@ -31,6 +31,7 @@ class AuthenticatedSessionController extends BaseController
                 $user = User::where('email', $request->email)->first();
                 $token = $user->createToken('API TOKEN');
                 $user['access_token'] = $token->plainTextToken;
+                $user->user_name = $user->user_name? $user->user_name : $user->first_name;
                 $data = [
                     'user' => $user,
                 ];

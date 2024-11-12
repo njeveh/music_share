@@ -4,16 +4,20 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { getFilteredMusicGroupMembers } from "@/app/lib/actions/music-groups";
-import { MusicGroupMember, PaginatedGroupMembers } from "@/app/lib/definitions";
+import { MusicGroup, MusicGroupMember, PaginatedGroupMembers } from "@/app/lib/definitions";
 import Pagination from "../pagination";
 import { Button } from "@/components/ui/button";
+import GroupMemberActions from "./group-member-actions";
+import LeaveGroupButton from "../leave-group-button";
 
 const MembersTableBody = async ({
-    slug,
+  musicGroup,
+  slug,
   query,
   currentPage,
 }: {
-    slug: any;
+  musicGroup: MusicGroup;
+  slug: any;
   query: string;
   currentPage: number;
 }) => {
@@ -28,7 +32,19 @@ const MembersTableBody = async ({
           <TableCell colSpan={2}>There are no music groups available currently.</TableCell>
         </TableRow>
         )}
-
+            <TableRow>
+              <TableCell className="px-2 w-fit whitespace-normal font-bold">You</TableCell>
+              <TableCell className="px-2 w-fit whitespace-normal">
+                {musicGroup.is_creator? <span className="text-green-500">Creator/Admin/Super Admin</span> :
+                  musicGroup.is_super_admin? <span className="text-amber-500">Super Admin</span> :
+                  musicGroup.is_admin? <span className="text-blue-500">Admin</span> :
+                  <span className="text-gray-400 dark:text-gray-300">Member</span>
+                }
+                </TableCell>
+                <TableCell className="px-2 text-right">
+                  <LeaveGroupButton slug={slug} musicGroup={musicGroup} />
+                </TableCell>
+            </TableRow>
         { ( musicGroupMembers.data !== null) && (
           <>
             {musicGroupMembers.data.map((musicGroupMember: MusicGroupMember, key: any) => (
@@ -41,8 +57,11 @@ const MembersTableBody = async ({
                   <span className="text-gray-400 dark:text-gray-300">Member</span>
                 }
                 </TableCell>
-              <TableCell className="px-2 text-right">
-                <Button>Actions</Button>
+                <TableCell className="px-2 text-right">
+                  {musicGroup.is_admin &&
+                  <GroupMemberActions slug={slug} musicGroup={musicGroup}
+                    musicGroupMember={musicGroupMember} />
+                  }
                 </TableCell>
             </TableRow>
             ))}

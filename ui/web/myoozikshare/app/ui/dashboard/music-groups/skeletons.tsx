@@ -220,3 +220,50 @@ export function MembershipRequestsTableBodySkeleton () {
     </>
   );
 }
+
+
+export function MusicGroupsTableRowSkeleton() {
+  return (
+    <TableRow className="">
+      <TableCell colSpan={3} className={`${shimmer} relative overflow-hidden`}>
+        <div className="w-full flex justify-between items-center">
+          {/* Name */}
+          <div className="w-1/3 h-5 rounded bg-gray-100 dark:bg-gray-900"></div>
+          {/* Actions */}
+          <div className="bg-white dark:bg-gray-700 h-9 w-24 px-4 py-2 border border-gray-100 rounded-lg">
+            <div className="w-16 h-5 bg-gray-100 dark:bg-gray-900"></div>
+          </div>
+        </div>
+      </TableCell>
+    </TableRow>
+  );
+
+}
+export function MusicGroupsTableBodySkeleton () {
+  return (
+    <>
+      <TableBody>
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+        <MusicGroupsTableRowSkeleton />
+      </TableBody>
+    </>
+  );
+}

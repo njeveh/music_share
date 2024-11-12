@@ -9,7 +9,7 @@ import { ChangePassword } from "@/app/lib/actions/auth";
 
 const UpdateUserPasswordForm = (
   {setApiFeedback, alertDialogTrigger} :
-  {setApiFeedback: React.Dispatch<React.SetStateAction<{messages: string[], status: string}>>, alertDialogTrigger: React.RefObject<HTMLButtonElement>}
+  {setApiFeedback: React.Dispatch<React.SetStateAction<{messages: string[], status: string}>>, alertDialogTrigger: React.RefObject<HTMLButtonElement | null>}
 ) => {
   const [isPending, setIsPending] = useState(false);
   const [inputs, setInputs] = useState({

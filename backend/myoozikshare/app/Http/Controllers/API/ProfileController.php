@@ -23,8 +23,8 @@ class ProfileController extends BaseController
                 'first_name' => ['required', 'string', 'min:2', 'max:255'],
                 'last_name' => ['required', 'string', 'min:2', 'max:255'],
                 'user_name' => ['sometimes', 'nullable',
-                    Rule::unique('users')->ignore($request->user()->id), 'string', 'min:2', 'max:255'],
-                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users')->ignore($request->user()->id)],
+                    Rule::unique('users', 'user_name')->ignore($request->user()->id), 'string', 'min:2', 'max:255'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users','email')->ignore($request->user()->id)],
             ]);
     
             if ($validator->fails()) {

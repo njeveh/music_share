@@ -17,7 +17,7 @@ type Inputs = {firstName: any; lastName: any; userName: any; email: any };
 
 const UpdateUserProfileInformationForm = (
   {setApiFeedback, alertDialogTrigger} :
-  {setApiFeedback: React.Dispatch<React.SetStateAction<{messages: string[], status: string}>>, alertDialogTrigger: React.RefObject<HTMLButtonElement>}
+  {setApiFeedback: React.Dispatch<React.SetStateAction<{messages: string[], status: string}>>, alertDialogTrigger: React.RefObject<HTMLButtonElement | null>}
 ) => {
   const [isPending, setIsPending] = useState(false);
   const { data: session, update } = useSession();

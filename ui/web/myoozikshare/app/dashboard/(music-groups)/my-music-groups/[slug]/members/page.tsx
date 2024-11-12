@@ -60,7 +60,7 @@ export default async function Page(props: {
             </TableRow>
           </TableHeader>
           <Suspense key={query + currentPage} fallback={<MembersTableBodySkeleton />}>
-          <MembersTableBody slug={slug} query={query} currentPage={currentPage} />
+          <MembersTableBody slug={slug} musicGroup={musicGroup} query={query} currentPage={currentPage} />
           </Suspense>
         </Table>
       </>

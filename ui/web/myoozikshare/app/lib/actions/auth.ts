@@ -492,7 +492,7 @@ export async function DeleteAccount(
     const session = await auth().then(res=>{return res});
     const token = session?.user.accessToken;
     const response = await fetch(`${process.env.BACKEND_API_URL}/delete-user-account`, {
-      method: 'POST',
+      method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,

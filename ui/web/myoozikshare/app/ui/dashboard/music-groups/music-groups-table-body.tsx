@@ -16,12 +16,6 @@ const MusicGroupsTableBody = async ({
   currentPage: number;
 }) => {
   const musicGroups: PaginatedGroupsReturnData | null = (await getFilteredMusicGroups(query, currentPage));
-    // const musicGroups: MusicGroup[] | null = (await getMusicGroups()).data;
-
-
-  function handleMusicGroupMembershipRequest() {
-    
-  }
   return (
     <>
       <TableBody>

@@ -23,7 +23,7 @@ const Page = () => {
         status: ''
     }
   );
-  const alertDialogTrigger = useRef<HTMLButtonElement>(null);
+  const alertDialogTrigger = useRef<HTMLButtonElement | null>(null);
   return (
     <>
     <ApiFeedbackAlertDialog apiFeedback={apiFeedback} alertDialogTrigger={alertDialogTrigger} />

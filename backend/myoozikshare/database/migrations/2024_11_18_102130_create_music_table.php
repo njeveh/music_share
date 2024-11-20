@@ -19,7 +19,9 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('composer');
             $table->string('score');
+            $table->string('score_public_id');
             $table->string('audio');
+            $table->string('audio_public_id');
             $table->text('lyrics')->nullable();
             $table->boolean('is_myoozikshare_approved')->default(true);
             $table->boolean('is_myoozikshare_verified')->default(false);

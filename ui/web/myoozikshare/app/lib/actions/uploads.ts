@@ -9,7 +9,7 @@ type MusicPostDataSetter = React.Dispatch < React.SetStateAction < MusicPostData
 let cloudUploadReturnData: CloudUploadResponse = {
   success: false,
   url: '',
-  publicID: '',
+  publicId: '',
 };
 
 let filesUploadReturnData: FilesUploadResponse = {
@@ -31,8 +31,11 @@ async function UploadScore(inputs: Inputs): Promise<boolean>{
       formData.append('file', inputs.score.file);
       const result = await UploadScoreFile(formData);
       if(result.success){
-        uploadedFiles.push(result.publicID);
-        postData.score = result.url
+        uploadedFiles.push(result.publicId);
+        postData.score = {
+          url: result.url,
+          public_id: result.publicId
+        }
         return true;                  
       }else{
         await DeleteFiles(uploadedFiles);
@@ -55,8 +58,11 @@ async function UploadMainAudio(inputs: Inputs): Promise<boolean>{
       formData.append('file', inputs.audioFile.file);
       const result = await UploadAudioFile(formData);
       if(result.success){
-        uploadedAudios.push(result.publicID);
-        postData.audio = result.url
+        uploadedAudios.push(result.publicId);
+        postData.audio = {
+          url: result.url,
+          public_id: result.publicId
+        }
         return true;                  
       }else{
         await DeleteFiles(uploadedAudios);
@@ -71,23 +77,26 @@ async function UploadMainAudio(inputs: Inputs): Promise<boolean>{
     }
 }
 // upload music files to cloud
-export default async function UploadFiles (inputs: Inputs, musicPostDataSetter: MusicPostDataSetter): Promise<FilesUploadResponse> {
+export default async function UploadFiles (inputs: Inputs): Promise<FilesUploadResponse> {
   try {          
     if (await UploadScore(inputs)) {
       if (await UploadMainAudio(inputs)) {
         for (let segmentIndex = 0; segmentIndex < inputs.segments.length; segmentIndex++) {
-          if (!postData.segments[segmentIndex]){
-            postData.segments[segmentIndex] = {
+          if (!postData.music_segments[segmentIndex]){
+            postData.music_segments[segmentIndex] = {
               title: '',
-              segment_components: [{
+              music_segment_components: [{
                 title: '',
-                audio: '',
+                audio: {
+                  url: '',
+                  public_id: ''
+                }
               }]
             }
           }            
           
-          postData.segments[segmentIndex] = {
-            ...postData.segments[segmentIndex],
+          postData.music_segments[segmentIndex] = {
+            ...postData.music_segments[segmentIndex],
             title: inputs.segments[segmentIndex].segmentTitle
           };
 
@@ -98,10 +107,13 @@ export default async function UploadFiles (inputs: Inputs, musicPostDataSetter: 
               formData.append('file', segmentComponents[segmentComponentIndex].audioFile.file);
               const res = await UploadAudioFile(formData)
               if(res.success){
-                uploadedAudios.push(res.publicID);
-                postData.segments[segmentIndex].segment_components[segmentComponentIndex] = {
+                uploadedAudios.push(res.publicId);
+                postData.music_segments[segmentIndex].music_segment_components[segmentComponentIndex] = {
                   title: segmentComponents[segmentComponentIndex].segmentComponentTitle,
-                  audio: res.url,
+                  audio: {
+                    url: res.url,
+                    public_id: res.publicId
+                  }
                 };             
               }else{
                 await DeleteFiles(uploadedAudios)
@@ -162,13 +174,13 @@ export async function UploadScoreFile(formData: FormData): Promise<CloudUploadRe
   if (uploadedScoreData.secure_url) {
     cloudUploadReturnData = {
       success: true,
-      publicID: uploadedScoreData.public_id,
+      publicId: uploadedScoreData.public_id,
       url: uploadedScoreData.secure_url,
     }
   } else {
     cloudUploadReturnData = {
       success: false,
-      publicID: '',
+      publicId: '',
       url: '',
     }
   }
@@ -177,7 +189,7 @@ export async function UploadScoreFile(formData: FormData): Promise<CloudUploadRe
     //console.error(error);
       cloudUploadReturnData = {
         success: false,
-        publicID: '',
+        publicId: '',
         url: '',
       }
       return cloudUploadReturnData;
@@ -197,13 +209,13 @@ export async function UploadAudioFile(formData: FormData): Promise<CloudUploadRe
   if (uploadedAudioData.secure_url) {
     cloudUploadReturnData = {
       success: true,
-      publicID: uploadedAudioData.public_id,
+      publicId: uploadedAudioData.public_id,
       url: uploadedAudioData.secure_url,
     }
   } else {
     cloudUploadReturnData = {
       success: false,
-      publicID: '',
+      publicId: '',
       url: '',
     }
   }
@@ -212,7 +224,7 @@ export async function UploadAudioFile(formData: FormData): Promise<CloudUploadRe
     console.error(error);
       cloudUploadReturnData = {
         success: false,
-        publicID: '',
+        publicId: '',
         url: '',
       }
       return cloudUploadReturnData;

@@ -36,12 +36,6 @@ export type User = {
     accessToken: string;
 };
 
-export type Customer = {
-  id: string;
-  name: string;
-  email: string;
-  image_url: string;
-};
 export type MusicGroup = {
   id: string;
   group_name: string;
@@ -132,14 +126,44 @@ export type Inputs = {
   segments: Segment[];
   inputErrors: InputErrors;
   publish: boolean;
+  visibleAfterUpload: boolean;
   musicGroupsToShareWith: string[];
 };
 
 export type CloudUploadResponse =  {
   success: boolean,
   url: string;
-  publicID: string;
+  publicId: string;
 };
+
+
+type PostDataFile = {
+  url: string;
+  public_id: string;
+};
+
+type PostDataSegmentComponent = {
+  title: string;
+  audio: PostDataFile;
+};
+
+type PostDataSegment = {
+  title: string;
+  music_segment_components: PostDataSegmentComponent[];
+};
+export type MusicPostData = {
+  title: string;
+  description: string;
+  composer: string;
+  score: PostDataFile;
+  audio: PostDataFile;
+  lyrics: string;
+  music_segments: PostDataSegment[];
+  is_published: boolean;
+  is_visible: boolean;
+  music_groups_to_share_with: string[];
+}
+
 export type FilesUploadResponse =  {
   success: boolean,
   uploadedFiles: string[];
@@ -147,23 +171,15 @@ export type FilesUploadResponse =  {
   postData: MusicPostData;
 };
 
-type PostDataSegmentComponent = {
-  title: string;
-  audio: string;
-};
-
-type PostDataSegment = {
-  title: string;
-  segment_components: PostDataSegmentComponent[];
-};
-export type MusicPostData = {
+export type Music = {
   title: string;
   description: string;
   composer: string;
   score: string;
   audio: string;
   lyrics: string;
-  segments: PostDataSegment[];
-  publish: boolean;
-  music_groups_to_share_with: string[];
+  music_segments: any;
+  is_published: boolean;
+  is_visible: boolean;
+  [key: string]: any
 }

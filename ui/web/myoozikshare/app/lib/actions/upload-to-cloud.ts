@@ -7,7 +7,7 @@ import { CloudUploadResponse } from "../definitions";
  let cloudUploadReturnData: CloudUploadResponse =  {
   success: false,
   url: '',
-  publicID: '',
+  publicId: '',
 };
 
 

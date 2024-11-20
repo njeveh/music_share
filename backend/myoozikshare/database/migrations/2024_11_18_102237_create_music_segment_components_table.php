@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('music_segment_id');
             $table->string('title');
             $table->string('audio');
+            $table->string('audio_public_id');
             $table->boolean('is_myoozikshare_approved')->default(true);
             $table->boolean('is_myoozikshare_verified')->default(false);
             $table->unsignedBigInteger('public_approvals')->default(0);

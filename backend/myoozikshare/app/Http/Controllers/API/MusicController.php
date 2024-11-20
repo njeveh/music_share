@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Music;
 use App\Models\MusicGroupMusic;
 use App\Models\MusicSegment;
+use App\Models\MusicSegmentComponent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -34,19 +35,23 @@ class MusicController extends BaseController
      */
     public function store(Request $request)
     {
-        return $this->respond([], 'some message');
+        Log::info($request);
+
         $validator = Validator::make($request->all(), [
         'title' => ['required', 'string', 'min:2', 'max:60'],
-        'description' => ['sometimes', 'nullable', 'string'],
+        'description' => ['required', 'string'],
         'composer' => ['required', 'string', 'min:2', 'max:60'],
-        'score' => ['required', 'url'],
-        'audio' => ['required', 'url'],
-        'lyrics' => ['sometimes', 'nullable', 'string'],
+        'score.url' => ['required', 'url'],
+        'score.public_id' => ['required', 'string'],
+        'audio.url' => ['required', 'url'],
+        'audio.public_id' => ['required', 'string'],
+        'lyrics' => ['required', 'string'],
         'is_visible' => ['required', 'boolean'],
         'is_published' => ['required', 'boolean'],
-        'segment.*.title' => ['required', 'string',],
-        'segment.*.component.*.title' => ['required', 'string',],
-        'segment.*.component.*.audio' => ['required', 'url',],
+        'segments.*.title' => ['required', 'string',],
+        'segments.*.segment_component.*.title' => ['required', 'string',],
+        'segments.*.segment_component.*.audio.url' => ['required', 'url',],
+        'segments.*.segment_component.*.audio.public_id' => ['required', 'url',],
         ]);
 
         if ($validator->fails()) {
@@ -56,32 +61,57 @@ class MusicController extends BaseController
         try {
             DB::beginTransaction();
             $user = $request->user();
-            $music_group = Music::create([
-                'group_name' => $request->group_name,
-                'group_description' => $request->group_description,
-                'creator_name' => $user->first_name. ' '. $user->last_name,
-                'group_contact' => $request->group_contact,
-            ]);
-            $music_group_member = MusicGroupMusic::create([
+            $music = Music::create([
                 'user_id' => $user->id,
-                'music_group_id' => $music_group->id,
-                'is_creator' => true,
+                'title' => $request->title,
+                'description' => $request->description,
+                'composer' => $request->composer,
+                'score' => $request->score['url'],
+                'score_public_id' => $request->score['public_id'],
+                'audio' => $request->audio['url'],
+                'audio_public_id' => $request->audio['public_id'],
+                'lyrics' => $request->lyrics,
+                'is_visible' => $request->is_visible,
+                'is_published' => $request->is_published,
             ]);
-            $music_group_admin = MusicSegment::create([
-                'music_group_member_id' => $music_group_member->id,
-                'is_super_admin' => true,
-                'roles' => json_encode([
-                    'manage_members', 'manage_music'
-                ]),
-            ]);
+            $music_segments = $request->music_segments;
+
+            foreach ($music_segments as $key => $music_segment) {
+                if($music_segment['title']) {
+                    $new_music_segment = MusicSegment::create([
+                        'music_id' => $music->id,
+                        'title' => $music_segment['title']
+                    ]);
+                    $music_segment_components = $music_segment['music_segment_components'];
+                    foreach ($music_segment_components as $key => $music_segment_component) {
+                        if($music_segment_component['title']) {
+                            $new_music_segment_component = MusicSegmentComponent::create([
+                                'music_segment_id' => $new_music_segment->id,
+                                'title' => $music_segment_component['title'],
+                                'audio' => $music_segment_component['audio']['url'],
+                                'audio_public_id' => $music_segment_component['audio']['public_id'],
+                            ]);
+                        }
+                    }
+                }
+            }
+            $music_groups_to_share_with = $request->music_groups_to_share_with;
+            if (count($music_groups_to_share_with)){
+                foreach ($music_groups_to_share_with as $key => $music_group_to_share_with) {
+                    MusicGroupMusic::create([
+                        'music_id' => $music->id,
+                        'music_group_id' => $music_group_to_share_with,
+                    ]);
+                }
+            }
             DB::commit();
             $data = [
-                'music_group' => $music_group,
+                'music' => $music,
             ];
-            //Log::info($data);
-            return $this->respond($data, 'group created successfully.');
+            Log::info($data);
+            return $this->respond($data, 'music added successfully.');
         } catch (\Throwable $th) {
-            //Log::info($th);
+            Log::info($th);
             DB::rollBack();
             return $this->respondWithErrorMessage('Sorry something went wrong, please try again.', BaseApiCodes::EX_UNCAUGHT_EXCEPTION(), 500);
             //throw $th;
@@ -96,6 +126,19 @@ class MusicController extends BaseController
         //
     }
 
+    /**
+     * show on instance of user music.
+     */
+    public function getMymusic(Request $request, $id)
+    {
+        $user = $request->user();
+        $music = $user->music()->where('id', $id)->first();
+        $data = [
+            'music' => $music,
+        ];
+        return $this->respond($data, '');
+    }
+    
     /**
      * Show the form for editing the specified resource.
      */

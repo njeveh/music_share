@@ -74,7 +74,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function musicGroupMembers(): HasMany
     {
         return $this->hasMany(MusicGroupMember::class);
-    }
+    }    
 
     /**
      * get music groups whose membership this user has requested
@@ -91,4 +91,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(MusicGroup::class, 'music_group_members');
     }
+
+    /**
+     * get the music uploaded by this user
+     */
+    public function music(): HasMany
+    {
+        return $this->hasMany(Music::class);
+    }    
 }

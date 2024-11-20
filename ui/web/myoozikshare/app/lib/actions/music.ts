@@ -1,7 +1,7 @@
 "use server"
 
 import { auth } from "@/auth";
-import { MusicPostData, ReturnData } from "../definitions";
+import { Music, MusicPostData, ReturnData } from "../definitions";
 import { Inputs, MusicGroup } from '@/app/lib/definitions';
 
 let returnData: ReturnData = {
@@ -40,14 +40,14 @@ export async function UploadMusic(postData: MusicPostData): Promise<ReturnData> 
       //console.log(result);
       returnData = {
         status: 'success',
-        data: result,
+        data: result.data.music,
         error_messages: []
       }
     } else {
       returnData = {
         status: 'fail',
         data: {},
-        error_messages: ["Sorry, we couldn't process your request. Something went wrong, please try again."]
+        error_messages: ["Sorry an error occured while uploading your data. Please try again."]
       }
     }
     return returnData;
@@ -55,9 +55,34 @@ export async function UploadMusic(postData: MusicPostData): Promise<ReturnData> 
       returnData = {
         status: 'fail',
         data: {},
-        error_messages: ["Sorry, we couldn't process your request. Something went wrong, please try again."]
+        error_messages: ["Sorry an error occured while uploading your data. Please try again."]
       }
       return returnData;
     //throw error;
   }
+}
+
+export async function getMyMusic(id: any): Promise<Music> {
+  try {
+    const session = (await auth());
+    const token = session?.user.accessToken;
+    const response = await fetch(`${process.env.BACKEND_API_URL}/music/my-music/${id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+    //console.log(response.status);
+    const result = await response.json();
+    //console.log(result.data.group);
+
+    if (response.status == 200) {
+      return result.data.music
+    }
+    else {
+      throw new Error('');
+    }
+  } catch (error) {
+    throw error;
+  }    
 }

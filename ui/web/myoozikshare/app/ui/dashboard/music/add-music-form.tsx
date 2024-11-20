@@ -17,10 +17,10 @@ import AudioInput from '@/app/ui/components/audio-input';
 import { AddSegment, AddSegmentComponent, RemoveSegment, RemoveSegmentComponent} from '@/app/dashboard/lib/utils';
 import { initialInputs, initialMusicPostData } from '@/app/dashboard/lib/data';
 import { UploadMusic } from '@/app/lib/actions/music';
-import UploadFiles, { UploadAudioFile, UploadScoreFile } from '@/app/lib/actions/uploads';
-import { DeleteFiles } from '@/app/lib/actions/upload-to-cloud';
 import ApiFeedbackAlertDialog from '../../components/api-feedback-alert-dialog';
 import FullPageLoadingIndicator from '../../components/loading-state-indicators/full-page-loading-indicator';
+import UploadFiles from '@/app/lib/actions/uploads';
+import { DeleteFiles } from '@/app/lib/actions/upload-to-cloud';
 
 const AddMusicForm = (
   {musicGroups}:
@@ -35,9 +35,6 @@ const AddMusicForm = (
       messages: ['']
     });
     const [inputs, setInputs] = useState<Inputs>(initialInputs);
-    const [uploadedAudios, setUploadedAudios] = useState<string[]>([]);
-    const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
-    const [postData, setPostData] = useState<MusicPostData>(initialMusicPostData);
 
     const HandleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const name = event.target.name;
@@ -95,16 +92,14 @@ const AddMusicForm = (
         status: '',
         messages: ['']
       });
-      setUploadedFiles([]);
-      setUploadedAudios([]);
-      setPostData(initialMusicPostData);
+
       if (
         inputs.inputErrors.title == '' &&
         inputs.inputErrors.composer == '' &&
         inputs.inputErrors.score == '' &&
         inputs.inputErrors.audioFile == ''
       ) {
-        const result = await UploadFiles(inputs, setPostData);
+        const result = await UploadFiles(inputs);
         if (result.success) {
           const finalPostData = {
             ...result.postData,
@@ -112,26 +107,27 @@ const AddMusicForm = (
             description: inputs.description,
             composer: inputs.composer,
             lyrics: inputs.lyrics,
-            publish: inputs.publish,
+            is_published: inputs.publish,
+            is_visible: inputs.visibleAfterUpload,
             music_groups_to_share_with: inputs.musicGroupsToShareWith,
           }
           const response = await UploadMusic(finalPostData);
           if (response !== void({})) {
             // console.log(res.data);
             if (response.status === 'fail') {
+              await DeleteFiles(result.uploadedAudios);
+              await DeleteFiles(result.uploadedFiles);
               setApiErrorMessages({
                 status: 'fail',
-                messages: ['Sorry an error occured while uploading your data. Please try again.']
+                messages: response.error_messages
               });
-              setPostData(initialMusicPostData);
               setIsPending(false);
               alertDialogTrigger.current?.click();
               return;
             } else if (response.status === 'success') {
               console.log(response.data);
+              router.push(`/dashboard/my-music/${response.data.id}`);
               setIsPending(false);
-              return;
-              // router.push('/dashboard/my-music-groups');
             }
           }
           setIsPending(false);
@@ -141,7 +137,6 @@ const AddMusicForm = (
             status: 'fail',
             messages: ['Sorry an error occured while uploading your data. Please try again.']
           });
-          setPostData(initialMusicPostData);
           setIsPending(false);
           alertDialogTrigger.current?.click();
           return;          
@@ -283,7 +278,7 @@ const AddMusicForm = (
           </div>
           <div>
             <div className="mb-1 mt-4 block text-sm font-medium">Share with:</div>
-            <div className='mb-2 flex justify-start items-center gap-2'>
+            <div className='ps-2 mb-2 flex justify-start items-center gap-2'>
               <input type="checkbox" id="publish" name="publish" checked={inputs.publish}
                 onChange={(e) => {setInputs((values) => ({...values, publish: !values.publish}));}} />
               <label htmlFor="publish">Public</label>
@@ -293,7 +288,7 @@ const AddMusicForm = (
                 {
                   musicGroups.map((group, index) => {
                     return (
-                      <div key={index} className='mb-2 flex justify-start items-center gap-2'>
+                      <div key={index} className='ps-2 mb-2 flex justify-start items-center gap-2'>
                         <input type="checkbox" id={`group-${group.id}`} name={`group-${group.id}`}
                         value={group.id}
                         onChange={(e) => {HandleMusicGroupsCheckBoxInputChange(e)}}/>
@@ -305,9 +300,22 @@ const AddMusicForm = (
               </>
             )
             }
-          </div>          
+          </div>
+          <div className='my-4'>
+            <p>Make visible immediately after upload (without reviewing)?</p>
+            <div className='ps-2 mb-2 flex justify-start items-center gap-2'>
+              <input type="radio" id="notVisibleAfterUpload" name="visibleAfterUpload" checked={!inputs.visibleAfterUpload}
+                onChange={(e) => {setInputs((values) => ({...values, visibleAfterUpload: false}));}} />
+              <label htmlFor="notVisibleAfterUpload">No</label>
+            </div>                            
+            <div className='ps-2 mb-2 flex justify-start items-center gap-2'>
+              <input type="radio" id="visibleAfterUpload" name="visibleAfterUpload" checked={inputs.visibleAfterUpload}
+                onChange={(e) => {setInputs((values) => ({...values, visibleAfterUpload: true}));}} />
+              <label htmlFor="visibleAfterUpload">Yes</label>
+            </div>
+          </div>
           <ActionButton className='mt-4 w-full flex justify-center items-center' disabled={isPending}>
-            Submit
+            {isPending? 'Uploading...': 'Upload'}
           </ActionButton>
         </div>
       </div>

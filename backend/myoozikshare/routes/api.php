@@ -49,5 +49,6 @@ Route::middleware(['ensure_json_response'])->group(function (){
         Route::post('/music-groups/my-music-groups/{group_id}/members/{member_id}/actions', [MusicGroupMemberController::class, 'act']);
         // Routes to manage Music
         Route::post('/music/upload', [MusicController::class, 'store']);
+        Route::get('/music/my-music/{id}', [MusicController::class, 'getMymusic']);
     });
 });

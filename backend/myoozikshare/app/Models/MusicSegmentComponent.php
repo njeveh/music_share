@@ -17,7 +17,7 @@ class MusicSegmentComponent extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'music_segment_id', 'title', 'audio',
+        'music_segment_id', 'title', 'audio', 'audio_public_id',
         'is_myoozikshare_approved', 'is_myoozikshare_verified',
         'public_approvals', 'public_disapprovals',
     ];

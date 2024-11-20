@@ -10,7 +10,7 @@ export default function Page() {
 return (
 <>
   <div className='w-full flex justify-end items-center'>
-    <Link href={'/dashboard/add-music'}>
+    <Link href={'/dashboard/my-music/add-music'}>
       <Button>Add Music</Button>
     </Link>
   </div>

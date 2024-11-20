@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreignUuid('user_id');
             $table->foreignUuid('music_id');
             $table->text('recommendation')->nullable();
-            $table->string('audio')->nullable();            
+            $table->string('audio')->nullable();
+            $table->string('audio_public_id')->nullable();           
         });
     }
 

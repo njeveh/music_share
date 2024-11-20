@@ -42,6 +42,7 @@ const initialInputs: Inputs = {
     lyrics: '',
   },
   publish: false,
+  visibleAfterUpload: false,
   musicGroupsToShareWith: [],
 }
 
@@ -49,17 +50,27 @@ const initialMusicPostData: MusicPostData = {
   title: '',
   description: '',
   composer: '',
-  score: '',
-  audio: '',
+  score: {
+    url: '',
+    public_id: ''
+  },
+  audio: {
+    url: '',
+    public_id: ''
+  },
   lyrics: '',
-  segments: [{
+  music_segments: [{
     title: '',
-    segment_components: [{
+    music_segment_components: [{
       title: '',
-      audio: '',
+      audio: {
+        url: '',
+        public_id: ''
+      },
     }],
   }],
-  publish: false,
+  is_published: false,
+  is_visible: false,
   music_groups_to_share_with: [],
 }
 

@@ -21,7 +21,8 @@ class Music extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id', 'title', 'description', 'composer', 'score', 'audio', 'lyrics',
+        'user_id', 'title', 'description', 'composer', 'score',
+        'score_public_id', 'audio', 'audio_public_id', 'lyrics',
         'is_myoozikshare_approved', 'is_myoozikshare_verified',
         'is_visible', //target group (music group / public) can view
         'is_published', // shared with the public domain
@@ -49,7 +50,7 @@ class Music extends Model
     /**
      * get the music groups that this music has been shared with
      */
-    public function musicGroup(): BelongsToMany
+    public function musicGroups(): BelongsToMany
     {
         return $this->belongsToMany(MusicGroup::class, 'music_group_music');
     }

@@ -18,7 +18,7 @@ let paginatedGroupsReturnData: PaginatedGroupsReturnData = {
 }
 
 
-export async function CreateMusicGroup(data: {groupName: string; groupDescription: string; groupContact: string})                                                                                                           {
+export async function CreateMusicGroup(data: {groupName: string; groupDescription: string; groupContact: string}) {
   try {
       const postData = {
             group_name: data.groupName.trim(),

@@ -155,7 +155,16 @@ class MusicGroupController extends BaseController
      */
     public function getUserMusicGroups(Request $request)
     {
-        $groups =  $request->user()->musicGroups;
+        $user = $request->user();
+        $groups =  $user->musicGroups;
+        foreach ($groups as $key => $group) {
+            $member = $group->musicGroupMembers()->where('user_id', $user->id)->first();
+            $admin = $member->musicGroupAdmin;
+            $group->member_id = $member->id;
+            $group->is_creator = $group->musicGroupMembers()?->where('is_creator', true)->where('user_id', $user->id)->exists();
+            $group->is_admin = $admin? true : false;
+            $group->is_super_admin = $admin?->is_super_admin? true : false;
+        }
         $data = [
             'groups' => $groups
         ];

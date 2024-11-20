@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AuthenticatedSessionController;
 use App\Http\Controllers\API\EmailVerificationController;
+use App\Http\Controllers\API\MusicController;
 use App\Http\Controllers\API\MusicGroupController;
 use App\Http\Controllers\API\MusicGroupMemberController;
 use App\Http\Controllers\API\MusicGroupMembershipRequestController;
@@ -23,7 +24,7 @@ Route::middleware(['ensure_json_response'])->group(function (){
         Route::post('/reset-password', [PasswordResetController::class, 'store']);
     });
 
-    Route::middleware(['auth:sanctum'])->group(function (){
+    Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/verify-email', [EmailVerificationController::class, 'verify'])
             ->middleware(['throttle:6,1']);
         Route::get('/email/verification-code', [EmailVerificationController::class, 'sendVerificationCode'])
@@ -46,5 +47,7 @@ Route::middleware(['ensure_json_response'])->group(function (){
         Route::post('/music-groups/my-music-groups/{group_id}/members/requests/{request_id}/reply', [MusicGroupMembershipRequestController::class, 'reply']);
         Route::get('/music-groups/my-music-groups/{id}/members', [MusicGroupController::class, 'getFilteredMusicGroupMembers']);
         Route::post('/music-groups/my-music-groups/{group_id}/members/{member_id}/actions', [MusicGroupMemberController::class, 'act']);
+        // Routes to manage Music
+        Route::post('/music/upload', [MusicController::class, 'store']);
     });
 });

@@ -1,4 +1,4 @@
-import { Inputs } from "@/app/lib/definitions";
+import { Inputs, MusicPostData } from "@/app/lib/definitions";
 
 const initialInputs: Inputs = {
   title: '',
@@ -6,11 +6,13 @@ const initialInputs: Inputs = {
   composer: '',
   score: {
     file: null,
-    previewUrl: ''
+    previewUrl: '',
+    uploadUrl: '',
   },
   audioFile: {
     file: null,
-    previewUrl: ''
+    previewUrl: '',
+    uploadUrl: '',
   },
   lyrics: '',
   segments: [{
@@ -21,7 +23,8 @@ const initialInputs: Inputs = {
       segmentComponentTitle: '',
       audioFile: {
         file: null,
-        previewUrl: ''
+        previewUrl: '',
+        uploadUrl: '',
       },
       inputErrors: {
         segmentComponentTitle: '',
@@ -37,7 +40,27 @@ const initialInputs: Inputs = {
     score: '',
     audioFile: '',
     lyrics: '',
-  }
+  },
+  publish: false,
+  musicGroupsToShareWith: [],
 }
 
-export {initialInputs};
+const initialMusicPostData: MusicPostData = {
+  title: '',
+  description: '',
+  composer: '',
+  score: '',
+  audio: '',
+  lyrics: '',
+  segments: [{
+    title: '',
+    segment_components: [{
+      title: '',
+      audio: '',
+    }],
+  }],
+  publish: false,
+  music_groups_to_share_with: [],
+}
+
+export {initialInputs, initialMusicPostData};

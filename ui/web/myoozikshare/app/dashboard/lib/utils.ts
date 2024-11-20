@@ -1,7 +1,9 @@
+
 import {
-  Inputs
+  Inputs,
 } from "@/app/lib/definitions";
 type Setter = React.Dispatch < React.SetStateAction < Inputs >>
+
   // add a segment
   const AddSegment = (data: Inputs, setter: Setter) => {
     if (data.segments[0].initial) {
@@ -15,7 +17,8 @@ type Setter = React.Dispatch < React.SetStateAction < Inputs >>
             segmentComponentTitle: '',
             audioFile: {
               file: null,
-              previewUrl: ''
+              previewUrl: '',
+              uploadUrl: '',
             },
             inputErrors: {
               segmentComponentTitle: '',
@@ -38,7 +41,8 @@ type Setter = React.Dispatch < React.SetStateAction < Inputs >>
               segmentComponentTitle: '',
               audioFile: {
                 file: null,
-                previewUrl: ''
+                previewUrl: '',
+                uploadUrl: '',
               },
               inputErrors: {
                 segmentComponentTitle: '',
@@ -60,7 +64,8 @@ const AddSegmentComponent = (data: Inputs, setter: Setter, index: any) => {
       segmentComponentTitle: '',
       audioFile: {
         file: null,
-        previewUrl: ''
+        previewUrl: '',
+        uploadUrl: '',
       },
       inputErrors: {
         segmentComponentTitle: '',
@@ -75,7 +80,8 @@ const AddSegmentComponent = (data: Inputs, setter: Setter, index: any) => {
         segmentComponentTitle: '',
         audioFile: {
           file: null,
-          previewUrl: ''
+          previewUrl: '',
+          uploadUrl: '',
         },
         inputErrors: {
           segmentComponentTitle: '',
@@ -104,7 +110,8 @@ const RemoveSegment = (data: Inputs, setter: Setter, index: any) => {
           segmentComponentTitle: '',
           audioFile: {
             file: null,
-            previewUrl: ''
+            previewUrl: '',
+            uploadUrl: '',
           },
           inputErrors: {
             segmentComponentTitle: '',
@@ -133,7 +140,8 @@ const RemoveSegmentComponent = (data: Inputs, setter: Setter, index: any, compon
       segmentComponentTitle: '',
       audioFile: {
         file: null,
-        previewUrl: ''
+        previewUrl: '',
+        uploadUrl: '',
       },
       inputErrors: {
         segmentComponentTitle: '',

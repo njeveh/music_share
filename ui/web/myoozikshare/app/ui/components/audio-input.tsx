@@ -6,24 +6,23 @@ import { useState, useRef } from 'react';
 import { BsUpload } from 'react-icons/bs';
 import AudioRecorder from './input-fields/audio-recorder';
 import FileInput from './input-fields/file-input';
-import { Button } from '@/components/ui/button';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion'
+} from '@/components/ui/accordion';
 
 type SetInputs = React.Dispatch<React.SetStateAction<Inputs>>
 const AudioInput = (
   {SegmentIndex, segmentComponentIndex, inputs, setInputs}:
   {SegmentIndex: any; segmentComponentIndex: any; inputs: Inputs; setInputs: SetInputs}
 ) => {
-    const audioRef: any = useRef();
+    const audioRef = useRef<HTMLAudioElement | null>(null);
     const [previewUrl, setPreviewUrl] = useState('');
 
 
-const HandleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+const HandleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
       const name = event.target.name;
       const files = event.target.files;
         if (files && files[0]) {
@@ -34,19 +33,21 @@ const HandleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
               ...values,
               [name]: {
                 file: file,
-                previewUrl: previewUrl
+                previewUrl: previewUrl,
+                uploadUrl: '',
               }
             }));
           }else {
             const newInputs = {...inputs};
             newInputs.segments[SegmentIndex].segmentComponents[segmentComponentIndex].audioFile = {
               file: file,
-              previewUrl: previewUrl
+              previewUrl: previewUrl,
+              uploadUrl: '',
             };
-          setInputs((values) => ({
-            ...newInputs
-          }));
-        }
+            setInputs((values) => ({
+              ...newInputs
+            }));
+          }
         setPreviewUrl(previewUrl);
         if(audioRef.current){
           audioRef.current.pause();
@@ -70,7 +71,9 @@ const HandleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
           <AccordionContent>
             <FileInput
               description='(Select a clear audio file preferably, a piece recorded in a studio setup or live performance.)'
-              id="audioFile" name="audioFile" onChange={HandleFileInputChange} accept="audio/*" />
+              id={SegmentIndex === null? "audioFile" : `audioFile-${SegmentIndex}-${segmentComponentIndex}`}
+              name={SegmentIndex === null? "audioFile" : `audioFile-${SegmentIndex}-${segmentComponentIndex}`}
+              onChange={HandleFileInputChange} accept="audio/mpeg, audio/mp4, audio/ogg, audio/wav, audio/aac, audio/m4a, " />
           </AccordionContent>
         </AccordionItem>
           <AccordionItem value="item-2" className='border-none'>
@@ -83,7 +86,7 @@ const HandleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
             </AccordionTrigger>
           </div>
           <AccordionContent>
-            <AudioRecorder SegmentIndex={null} segmentComponentIndex={null} inputs={inputs} setInputs={setInputs} audioRef={audioRef} setPreviewUrl={setPreviewUrl} />
+            <AudioRecorder SegmentIndex={SegmentIndex} segmentComponentIndex={segmentComponentIndex} inputs={inputs} setInputs={setInputs} audioRef={audioRef} setPreviewUrl={setPreviewUrl} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>

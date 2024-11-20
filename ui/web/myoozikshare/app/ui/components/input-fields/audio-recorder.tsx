@@ -78,18 +78,20 @@ const AudioRecorder = ({
             ...prevState,
             audioFile: {
               file: audioBlob,
-              previewUrl: playableUrl
+              previewUrl: playableUrl,
+              uploadUrl: '',
             }
           }));
         }else {
             const newInputs = {...inputs};
             newInputs.segments[SegmentIndex].segmentComponents[segmentComponentIndex].audioFile = {
               file: audioBlob,
-              previewUrl: playableUrl
+              previewUrl: playableUrl,
+              uploadUrl: '',
             };
-          setInputs((values) => ({
-            ...newInputs
-          }));
+            setInputs((values) => ({
+              ...newInputs
+            }));
         }
         setPreviewUrl(playableUrl);
         if (audioRef.current) {          

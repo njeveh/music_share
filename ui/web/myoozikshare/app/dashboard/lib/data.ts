@@ -6,33 +6,18 @@ const initialInputs: Inputs = {
   composer: '',
   score: {
     file: null,
+    url: '',
     previewUrl: '',
     uploadUrl: '',
   },
   audioFile: {
     file: null,
+    url: '',
     previewUrl: '',
     uploadUrl: '',
   },
   lyrics: '',
-  segments: [{
-    initial: true,
-    segmentTitle: '',
-    segmentComponents: [{
-      initial: true,
-      segmentComponentTitle: '',
-      audioFile: {
-        file: null,
-        previewUrl: '',
-        uploadUrl: '',
-      },
-      inputErrors: {
-        segmentComponentTitle: '',
-        audioFile: '',
-      }
-    }, ],
-    inputError: '',
-  }, ],
+  segments: [],
   inputErrors: {
     title: '',
     description: '',
@@ -42,7 +27,7 @@ const initialInputs: Inputs = {
     lyrics: '',
   },
   publish: false,
-  visibleAfterUpload: false,
+  visible: false,
   musicGroupsToShareWith: [],
 }
 

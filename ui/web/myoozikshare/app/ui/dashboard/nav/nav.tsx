@@ -21,6 +21,7 @@ import clsx from "clsx";
 import { getSession, logOut } from "@/app/lib/actions/auth";
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
+import SearchForm from "../../components/search-form";
 
 
 const Nav = () => {
@@ -68,14 +69,7 @@ return (
 {
   pathName === '/dashboard/my-music' &&
     <div className="hidden md:flex items-center flex-1 px-6">
-      <form className="flex flex-row search-form w-full justify-center items-center">
-        <input type="text" id="search-input" className="h-10 w-full max-w-[750px] rounded-tl-lg rounded-bl-lg dark:bg-slate-600"
-          name="searchValue" placeholder="Search ..." />
-        <button type="submit"
-          className="h-10 flex justify-center items-center w-16 bg-slate-600 p-2 rounded-tr-lg rounded-br-lg ">
-          <BsSearch />
-        </button>
-      </form>
+      <SearchForm />
     </div>
 }
 
@@ -86,14 +80,7 @@ return (
   {
     pathName === '/dashboard/my-music' &&
   <div className="flex md:hidden justify-center items-center w-full py-2">
-    <form className="flex flex-1 flex-row search-form">
-      <input type="text" id="search-input" className="h-10 w-full rounded-tl-lg rounded-bl-lg dark:bg-slate-600"
-        name="searchValue" placeholder="Search ..." />
-      <button type="submit"
-        className="h-10 flex justify-center items-center w-16 bg-slate-600 p-2 rounded-tr-lg rounded-br-lg ">
-        <BsSearch />
-      </button>
-    </form>
+    <SearchForm />
   </div>
   }
 

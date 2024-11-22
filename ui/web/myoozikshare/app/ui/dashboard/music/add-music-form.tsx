@@ -66,7 +66,7 @@ const AddMusicForm = (
       }));
     }    
 
-    const HandleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const HandleScoreInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const name = event.target.name;
       const files = event.target.files;
         if (files && files[0]) {
@@ -76,6 +76,7 @@ const AddMusicForm = (
             ...values,
             [name]: {
               file: file,
+              url: values.score.url,
               previewUrl: previewUrl,
               uploadUrl: '',
             }
@@ -108,7 +109,7 @@ const AddMusicForm = (
             composer: inputs.composer,
             lyrics: inputs.lyrics,
             is_published: inputs.publish,
-            is_visible: inputs.visibleAfterUpload,
+            is_visible: inputs.visible,
             music_groups_to_share_with: inputs.musicGroupsToShareWith,
           }
           const response = await UploadMusic(finalPostData);
@@ -147,29 +148,30 @@ const AddMusicForm = (
   return (
     <>
       {isPending && (
-        <FullPageLoadingIndicator />
+      <FullPageLoadingIndicator />
       )}
-  <div>
-    <ApiFeedbackAlertDialog alertDialogTrigger={alertDialogTrigger} apiFeedback={apiErrorMessages} />
-    <form onSubmit={HandleSubmit} className="space-y-3">
-      <div className="flex justify-center items-center flex-col rounded-lg bg-gray-50 dark:bg-gray-900 px-2 pb-4 pt-8">
-        <h1 className={`${lusitana.className} mb-3 text-2xl`}>
-          Add Music
-        </h1>
-        <div className='w-full lg:w-3/4'>
-          <div className="w-full mb-4">
-            <TextInput label="Title" type="text" id="title" name="title" placeholder="Music title" required
-              autoComplete="on" value={inputs.title || '' } onChange={HandleInputChange} autoFocus />
-            <div className={ inputs.inputErrors.title ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>
-              {inputs.inputErrors.title}
-            </div>
-          </div>
-          <div className="w-full mb-4">
-            <TextArea rows={3} label="Description" id="description" name="description"
-              placeholder="brief music description" required
-              description='(Give a brief description of the music. For example you may tell us about its genre, or category from a consumer perspective.)'
-              value={inputs.description || '' } onChange={HandleInputChange} />
-            <div className={ inputs.inputErrors.description ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>
+      <div>
+        <ApiFeedbackAlertDialog alertDialogTrigger={alertDialogTrigger} apiFeedback={apiErrorMessages} />
+        <form onSubmit={HandleSubmit} className="space-y-3">
+          <div
+            className="flex justify-center items-center flex-col rounded-lg bg-gray-50 dark:bg-gray-900 px-2 pb-4 pt-8">
+            <h1 className={`${lusitana.className} mb-3 text-2xl`}>
+              Add Music
+            </h1>
+            <div className='w-full lg:w-3/4'>
+              <div className="w-full mb-4">
+                <TextInput label="Title" type="text" id="title" name="title" placeholder="Music title" required
+                  autoComplete="on" value={inputs.title || '' } onChange={HandleInputChange} autoFocus />
+                <div className={ inputs.inputErrors.title ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>
+                  {inputs.inputErrors.title}
+                </div>
+              </div>
+              <div className="w-full mb-4">
+                <TextArea rows={3} label="Description" id="description" name="description"
+                  placeholder="brief music description" required
+                  description='(Give a brief description of the music. For example you may tell us about its genre, or category from a consumer perspective.)'
+                  value={inputs.description || '' } onChange={HandleInputChange} />
+                <div className={ inputs.inputErrors.description ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>
               {inputs.inputErrors.description}
             </div>
           </div>
@@ -182,7 +184,7 @@ const AddMusicForm = (
           </div>
           <div className="w-full mb-4">
             <FileInput label="Score" id="score" name="score" required
-              onChange={HandleFileInputChange} accept="image/png, image/jpg, image/jpeg, .pdf" />
+              onChange={HandleScoreInputChange} accept="image/png, image/jpg, image/jpeg, .pdf" />
             {inputs.score.file &&
               <Link
                 href={inputs.score.previewUrl}
@@ -204,7 +206,7 @@ const AddMusicForm = (
               {inputs.inputErrors.lyrics}
             </div>
           </div>
-          {!inputs.segments[0].initial && inputs.segments.map((segment, index) => {
+          {inputs.segments.length > 0 && inputs.segments.map((segment, index) => {
             return (
               <div key={index} className='bg-sky-200 dark:bg-black p-2 my-4 rounded-lg'>
                 <div className='w-full flex justify-end items-center'>
@@ -229,7 +231,7 @@ const AddMusicForm = (
                     </div>
                 </div>
               {
-                !segment.segmentComponents[0].initial && segment.segmentComponents.map((segmentComponent, componentIndex) => {
+                segment.segmentComponents.length > 0 && segment.segmentComponents.map((segmentComponent, componentIndex) => {
                   return(
                     <div key={componentIndex} className="mt-2 border p-2 rounded-lg  bg-slate-200 dark:bg-gray-900">
                       <div className='w-full flex justify-end items-center'>
@@ -304,12 +306,12 @@ const AddMusicForm = (
           <div className='my-4'>
             <p>Make visible immediately after upload (without reviewing)?</p>
             <div className='ps-2 mb-2 flex justify-start items-center gap-2'>
-              <input type="radio" id="notVisibleAfterUpload" name="visibleAfterUpload" checked={!inputs.visibleAfterUpload}
+              <input type="radio" id="notVisibleAfterUpload" name="visibleAfterUpload" checked={!inputs.visible}
                 onChange={(e) => {setInputs((values) => ({...values, visibleAfterUpload: false}));}} />
               <label htmlFor="notVisibleAfterUpload">No</label>
             </div>                            
             <div className='ps-2 mb-2 flex justify-start items-center gap-2'>
-              <input type="radio" id="visibleAfterUpload" name="visibleAfterUpload" checked={inputs.visibleAfterUpload}
+              <input type="radio" id="visibleAfterUpload" name="visibleAfterUpload" checked={inputs.visible}
                 onChange={(e) => {setInputs((values) => ({...values, visibleAfterUpload: true}));}} />
               <label htmlFor="visibleAfterUpload">Yes</label>
             </div>

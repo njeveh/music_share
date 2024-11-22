@@ -37,7 +37,7 @@ const Page = async ({
           <CardContent>
             <div className="mb-4">
               <div>
-                Score
+                Score:
               </div>
               <div className="w-fit">
                 <Link
@@ -48,7 +48,7 @@ const Page = async ({
               </div>
             </div>
             <div className="mb-2">
-              <div>Audio</div>
+              <div>Audio:</div>
               <div className='w-full my-2'>
                 <audio controls className='w-full my-2'>
                   <source src={music.audio} type='audio/mpeg' />
@@ -61,6 +61,12 @@ const Page = async ({
                     Your browser doesn't support this audio file.
                   </p>
                 </audio>
+              </div>
+            </div>
+            <div className="my-4">
+              <div>Lyrics:</div>
+              <div className="whitespace-pre-wrap">
+                {music.lyrics}
               </div>
             </div>
             <div className="pt-4">

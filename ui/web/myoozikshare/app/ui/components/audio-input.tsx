@@ -33,6 +33,7 @@ const HandleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>)
               ...values,
               [name]: {
                 file: file,
+                url: values.audioFile.url,
                 previewUrl: previewUrl,
                 uploadUrl: '',
               }
@@ -41,6 +42,7 @@ const HandleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>)
             const newInputs = {...inputs};
             newInputs.segments[SegmentIndex].segmentComponents[segmentComponentIndex].audioFile = {
               file: file,
+              url: newInputs.segments[SegmentIndex].segmentComponents[segmentComponentIndex].audioFile.url,
               previewUrl: previewUrl,
               uploadUrl: '',
             };
@@ -57,7 +59,6 @@ const HandleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>)
     }
   return (
     <div className="w-full mb-4">
-      <div className='mb-1 mt-4 block text-sm font-medium'>Audio:</div>
       <Accordion type="single" collapsible>
         <AccordionItem value="item-1" className='border-none'>
           <div className="w-fit flex justify-center items-center gap-2">

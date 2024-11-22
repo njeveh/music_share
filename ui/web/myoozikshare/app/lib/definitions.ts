@@ -84,6 +84,7 @@ export type PaginatedGroupMembershipRequest = {
 
 type InputFile = {
   file: File | Blob | null;
+  url: string;
   previewUrl: string;
   uploadUrl: string;
 };
@@ -93,18 +94,20 @@ type SegmentComponentInputErrors = {
   audioFile: string,
 }
 
-type SegmentComponent = {
-  initial: boolean;
+export type SegmentComponent = {
+  status: null | 'added' | 'updated'
   segmentComponentTitle: string;
   audioFile: InputFile;
   inputErrors: SegmentComponentInputErrors;
+  [key: string]: any
 };
 
-type Segment = {
-  initial: boolean;
+export type Segment = {
   segmentTitle: string;
   segmentComponents: SegmentComponent[];
   inputError: string;
+  status: null | 'added' | 'updated'
+  [key: string]: any
 };
 
 type InputErrors = {
@@ -126,7 +129,7 @@ export type Inputs = {
   segments: Segment[];
   inputErrors: InputErrors;
   publish: boolean;
-  visibleAfterUpload: boolean;
+  visible: boolean;
   musicGroupsToShareWith: string[];
 };
 
@@ -202,3 +205,18 @@ export type PaginatedMUsicData = {
   currentPage: number,
   error_messages: string[]  
 }
+
+
+// export type UpdatedInputs = {
+//   title: string;
+//   description: string;
+//   composer: string;
+//   score: InputFile;
+//   audioFile: InputFile;
+//   lyrics: string;
+//   segments: Segment[];
+//   inputErrors: InputErrors;
+//   publish: boolean;
+//   visible: boolean;
+//   musicGroupsToShareWith: string[];
+// };

@@ -4,9 +4,11 @@ import Link from 'next/link';
 import { MdLibraryMusic } from 'react-icons/md';
   
   export async function MusicCard({
-    music
+    music,
+    publicView
   }: {
     music: Music
+    publicView: boolean
   }) {
 
     return (
@@ -32,10 +34,12 @@ import { MdLibraryMusic } from 'react-icons/md';
         <div className="w-full mb-2">
           <h3 className="text-sm font-medium">{music.title}</h3>
         <div>Composer: {music.composer}</div>
-        <div>Posted by: {music.author}</div>
+        {publicView &&
+            <div>Posted by: {music.author}</div>
+        }
         </div>
         <div>
-          <Link href={`/music-breakdown/${music.id}`}>
+          <Link href={publicView? `/music-breakdown/${music.id}` : `/dashboard/my-music/${music.id}`}>
             <Button>See breakdown</Button>
           </Link>
         </div>

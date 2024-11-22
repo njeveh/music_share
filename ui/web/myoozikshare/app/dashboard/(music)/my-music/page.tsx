@@ -1,30 +1,38 @@
-import Nav from '@/app/ui/dashboard/nav/nav';
-import Footer from '@/app/ui/components/footer/footer';
-import { SongCard } from '@/app/ui/components/music-card';
+import MyMusicCards from '@/app/ui/dashboard/music/my-music-cards';
+import { lusitana } from '@/app/ui/fonts';
+import { MusicCardsSkeleton } from '@/app/ui/skeletons';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { Suspense } from 'react';
+import { MdAddCircleOutline } from 'react-icons/md';
 
-export default function Page() {
-  const cards = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+export default async function Page(props: {
+  searchParams?: Promise<{
+    query?: string;
+    page?: string;
+  }>;
+}) {
+  const searchParams = await props.searchParams;
+  const query = searchParams?.query || '';
+  const currentPage = Number(searchParams?.page) || 1;
 
 return (
 <>
-  <div className='w-full flex justify-end items-center'>
+  <div className="w-full p-2 flex justify-end items-center">
     <Link href={'/dashboard/my-music/add-music'}>
-      <Button>Add Music</Button>
+      <Button type="button">
+        <MdAddCircleOutline className='me-1'/>Add music
+      </Button>
     </Link>
   </div>
-  <div className='w-full flex justify-center items-center ssp-font-family p-4 md:p-6'>
-    <div className="w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 min-[500px]:grid-cols-2">
-      {cards.map((card, key) => {
-        return (
-        <SongCard key={key} title='Sifa na Utukufu Vyote ni Kwa Mungu' composer='John M. Doe' link='/dashboard/music-breakdown' />
-        );
-      })
-    }      
-    </div>
-  </div>       
-  <Footer />
+  <div className='w-full flex justify-center items-center p-2'>
+    <h1 className={`${lusitana.className} mb-3 text-2xl`}>
+      My Music
+    </h1>  
+  </div>
+  <Suspense key={query + currentPage} fallback={<MusicCardsSkeleton />}>
+    <MyMusicCards query={query} currentPage={currentPage} />     
+  </Suspense>
 </>
 );
 }

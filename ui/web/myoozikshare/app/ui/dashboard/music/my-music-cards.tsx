@@ -1,16 +1,16 @@
-import { GetFilteredPublicMusic } from "@/app/lib/actions/music";
+import { GetMyFilteredMusic } from "@/app/lib/actions/music";
 import { PaginatedMUsicData } from "@/app/lib/definitions";
-import { MusicCard } from "./music-card";
-import Pagination from "./pagination";
+import { MusicCard } from "../../components/music-card";
+import Pagination from "../../components/pagination";
 
-const PublicMusicCards = async ({
+const MyMusicCards = async ({
   query,
   currentPage,
 }: {
   query: string;
   currentPage: number;
 }) => {
-const paginatedMusic: PaginatedMUsicData = (await GetFilteredPublicMusic(query, currentPage));
+const paginatedMusic: PaginatedMUsicData = (await GetMyFilteredMusic(query, currentPage));
   return (
   <div>
     { (paginatedMusic.data == null) && (
@@ -22,7 +22,7 @@ const paginatedMusic: PaginatedMUsicData = (await GetFilteredPublicMusic(query, 
           <div className="w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 min-[500px]:grid-cols-2">    
             <>
             {paginatedMusic.data.map((music, index) => (
-              <MusicCard key={music.id} music={music} publicView={true} />
+              <MusicCard key={music.id} music={music} publicView={false} />
             ))}
             </>
           </div>
@@ -36,4 +36,4 @@ const paginatedMusic: PaginatedMUsicData = (await GetFilteredPublicMusic(query, 
 );
 }
 
-export default PublicMusicCards;
+export default MyMusicCards;

@@ -119,6 +119,21 @@ class MusicController extends BaseController
     }
 
     /**
+     * get music uploaded by user.
+     */
+    public function getUserFilteredmusic(Request $request)
+    {
+        $user = $request->user();
+        $music_data = $user->music()->whereLike(['title', 'description', 'composer', 'lyrics'], $request->query('query') ?? '')
+        ->paginate(50);
+        //Log::info($music_data);
+        $data = [
+            'music' => $music_data
+        ];
+        return $this->respond($data);
+    }
+    
+    /**
      * show on instance of user music.
      */
     public function getMymusic(Request $request, $id)
@@ -132,10 +147,14 @@ class MusicController extends BaseController
             $music_segment->music_segment_components = $music_segment->musicSegmentComponents;
         }
         $music->music_segments = $music_segments;
+
+        // ids of music groups this music is shared with
+        $music->music_groups_shared_with = $music->musicGroups()->get()->modelKeys();
+
         $data = [
             'music' => $music,
         ];
-        Log::info($data);
+        //Log::info($data);
         return $this->respond($data, '');
     }
 

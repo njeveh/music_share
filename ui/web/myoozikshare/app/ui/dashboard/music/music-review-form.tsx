@@ -21,7 +21,7 @@ import { useRef, useState } from "react";
 import FullPageLoadingIndicator from "../../components/loading-state-indicators/full-page-loading-indicator";
 import ApiFeedbackAlertDialog from "../../components/api-feedback-alert-dialog";
 import { lusitana } from "../../fonts";
-import { AddSegment, AddSegmentComponent, RemoveSegment, RemoveSegmentComponent } from "@/app/dashboard/lib/utils";
+import { AddSegment, AddSegmentComponent, RemoveScoreSelectedForUpload, RemoveSegment, RemoveSegmentComponent } from "@/app/dashboard/lib/utils";
 
 export default function MusicReviewForm({
   music,
@@ -32,7 +32,8 @@ export default function MusicReviewForm({
 }) {
     const [isPending, setIsPending] = useState(false);
     const alertDialogTrigger = useRef<HTMLButtonElement | null>(null);
-    const audioRef = useRef<HTMLAudioElement | null>(null);
+    // const audioInputRef = useRef<HTMLInputElement | null>(null);
+    const scoreRef = useRef<HTMLInputElement | null>(null);
     const [apiErrorMessages, setApiErrorMessages] = useState({
       status: '',
       messages: ['']
@@ -185,20 +186,26 @@ return (
             </div>
           </div>
           <div className="w-full mb-4">
-            <FileInput label="Score" id="score" name="score" required
+            <FileInput ref={scoreRef} label="Score" id="score" name="score" required
               onChange={HandleScoreInputChange} accept="image/png, image/jpg, image/jpeg, .pdf" />
-                <div className="my-2 w-fit flex justify-center items-center gap-8">
+                <div className="my-2 w-fit flex justify-center items-start gap-8">
                   <Link href={music.score.url} target="__blank"
                     className="p-2 flex flex-col justify-center items-center gap-2 border border-dashed border-red-500 rounded-lg">
                     <div className="text-sm underline">Current score</div>
                     <FileIcon className="w-10 h-10 text-amber-500" />
                   </Link>
                   {inputs.score.file &&
-                    <Link href={inputs.score.previewUrl} target="__blank"
-                      className="p-2 flex flex-col justify-center items-center gap-2 border border-dashed border-red-500 rounded-lg">
-                      <div className="text-sm underline">Selected for upload</div>
-                      <FileIcon className="w-10 h-10 text-amber-500" />
-                    </Link>
+                    <div className="flex flex-col justify-center items-center gap-2">
+                      <Link href={inputs.score.previewUrl} target="__blank"
+                        className="p-2 flex flex-col justify-center items-center gap-2 border border-dashed border-red-500 rounded-lg">
+                        <div className="text-sm underline">Selected for upload</div>
+                        <FileIcon className="w-10 h-10 text-amber-500" />
+                      </Link>
+                      <Button variant={'destructive'}
+                        onClick={e => {RemoveScoreSelectedForUpload(setInputs, scoreRef)}}>
+                        Discard
+                      </Button>
+                    </div>
                   }              
                 </div>
             <div className={ inputs.inputErrors.score ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>

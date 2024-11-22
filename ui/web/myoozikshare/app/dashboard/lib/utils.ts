@@ -2,7 +2,10 @@
 import {
   Inputs,
 } from "@/app/lib/definitions";
-type Setter = React.Dispatch < React.SetStateAction < Inputs >>
+import { RefObject } from "react";
+type Setter = React.Dispatch < React.SetStateAction < Inputs >>;
+type PreviewUrlSetter = React.Dispatch < React.SetStateAction < string >>;
+// Dispatch<SetStateAction<string>>
 
   // add a segment
   const AddSegment = (data: Inputs, setter: Setter) => {
@@ -138,9 +141,83 @@ const RemoveSegmentComponent = (data: Inputs, setter: Setter, index: any, compon
   }
 }
 
+
+// remove the audio file selected for upload
+const RemoveAudioFileSelectedForUpload = (setter: Setter, inputRef: RefObject<HTMLInputElement | null>, previewUrlSetter: PreviewUrlSetter ) => {
+    setter((values) => ({
+      ...values,
+      audioFile: {
+        ...values.score,
+        file: null,
+        previewUrl: '',
+        uploadUrl: '',
+      }
+    }));
+
+    // reset file input element
+    if (inputRef && inputRef.current){
+      inputRef.current.value = "";
+      inputRef.current.type = "text";
+      inputRef.current.type = "file";
+    }
+
+    // reset the preview url
+    previewUrlSetter('');   
+}
+
+// remove the score file selected for upload
+const RemoveScoreSelectedForUpload = (setter: Setter, inputRef: RefObject<HTMLInputElement | null>) => {
+    setter((values) => ({
+      ...values,
+      score: {
+        ...values.score,
+        file: null,
+        previewUrl: '',
+        uploadUrl: '',
+      }
+    }));
+
+    // reset file input element
+    if (inputRef && inputRef.current){
+      inputRef.current.value = "";
+      inputRef.current.type = "text";
+      inputRef.current.type = "file";
+    }    
+}
+
+// remove a segment component audio file selected for upload
+const RemoveSegmentComponentUploadAudioFile = (data: Inputs, setter: Setter, index: any, componentIndex: any,  inputRef: RefObject<HTMLInputElement | null>, previewUrlSetter: PreviewUrlSetter ) => {
+  const newData = data;
+  let newAudioFile = newData.segments[index].segmentComponents[componentIndex].audioFile;
+  newAudioFile = {
+    ...newAudioFile,
+    file: null,
+    previewUrl: '',
+    uploadUrl: '',    
+  }
+  newData.segments[index].segmentComponents[componentIndex].audioFile = {
+    ...newAudioFile
+  }
+
+    setter((values) => ({
+      ...newData
+    }));
+    // reset file input element
+    if (inputRef && inputRef.current){
+      inputRef.current.value = "";
+      inputRef.current.type = "text";
+      inputRef.current.type = "file";
+    }
+    // reset the preview url
+    previewUrlSetter('');       
+}
+
 export {
   AddSegment,
   AddSegmentComponent,
   RemoveSegment,
-  RemoveSegmentComponent
+  RemoveSegmentComponent,
+  RemoveScoreSelectedForUpload,
+  RemoveAudioFileSelectedForUpload,
+  RemoveSegmentComponentUploadAudioFile,
 }

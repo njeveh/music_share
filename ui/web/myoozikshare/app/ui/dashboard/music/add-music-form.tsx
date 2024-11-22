@@ -28,7 +28,6 @@ const AddMusicForm = (
 ) => {
     const [isPending, setIsPending] = useState(false);
     const alertDialogTrigger = useRef<HTMLButtonElement | null>(null);
-    const audioRef = useRef<HTMLAudioElement | null>(null);
     const router = useRouter();
     const [apiErrorMessages, setApiErrorMessages] = useState({
       status: '',

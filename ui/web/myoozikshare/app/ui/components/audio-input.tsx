@@ -12,6 +12,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { MdClose } from 'react-icons/md';
+import { RemoveSegmentComponentUploadAudioFile, RemoveAudioFileSelectedForUpload } from '@/app/dashboard/lib/utils';
 
 type SetInputs = React.Dispatch<React.SetStateAction<Inputs>>
 const AudioInput = (
@@ -19,7 +21,8 @@ const AudioInput = (
   {SegmentIndex: any; segmentComponentIndex: any; inputs: Inputs; setInputs: SetInputs}
 ) => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
-    const [previewUrl, setPreviewUrl] = useState('');
+    const audioInputRef = useRef<HTMLInputElement | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string>('');
 
 
 const HandleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,6 +74,7 @@ const HandleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>)
           </div>
           <AccordionContent>
             <FileInput
+              ref={audioInputRef}
               description='(Select a clear audio file preferably, a piece recorded in a studio setup or live performance.)'
               id={SegmentIndex === null? "audioFile" : `audioFile-${SegmentIndex}-${segmentComponentIndex}`}
               name={SegmentIndex === null? "audioFile" : `audioFile-${SegmentIndex}-${segmentComponentIndex}`}
@@ -92,7 +96,15 @@ const HandleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>)
         </AccordionItem>
       </Accordion>
       {previewUrl &&
-      <div className='border-2 border-dashed border-red-500 p-2 rounded'>
+      <div className='relative border-2 border-dashed border-amber-500 p-2 rounded'>
+        {SegmentIndex === null ?
+          <button type='button' className='absolute top-0 end-0' onClick={(e) => {RemoveAudioFileSelectedForUpload(setInputs, audioInputRef, setPreviewUrl)}}>
+            <MdClose className='w-8 h-8 text-red-700'/>
+          </button>:
+          <button type='button' className='absolute top-0 end-0' onClick={(e) => {RemoveSegmentComponentUploadAudioFile(inputs, setInputs, SegmentIndex, segmentComponentIndex, audioInputRef, setPreviewUrl)}}>
+            <MdClose className='w-8 h-8 text-red-700'/>
+          </button>        
+        }
         <div className='text-red-500'>Audio Input Preview</div>
         <audio controls ref={audioRef} className='w-full my-2'>
           <source src={previewUrl} type='audio/mpeg' />

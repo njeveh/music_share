@@ -35,7 +35,7 @@ class MusicGroupController extends BaseController
     {
         $my_groups_ids = [];
         $my_groups_ids = $request->user()->musicGroups()->get()?->modelKeys();
-        $groups = MusicGroup::whereLike('group_name', '%'.$request->query('query').'%')
+        $groups = MusicGroup::whereLike(['group_name', 'group_description'], $request->query('query') ?? '')
         ->paginate(50);
         foreach ($groups as $key => $group) {
             $membership_request_status = '---------';

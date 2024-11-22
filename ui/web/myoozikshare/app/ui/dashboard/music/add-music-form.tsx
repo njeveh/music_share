@@ -125,7 +125,7 @@ const AddMusicForm = (
               alertDialogTrigger.current?.click();
               return;
             } else if (response.status === 'success') {
-              console.log(response.data);
+              //console.log(response.data);
               router.push(`/dashboard/my-music/${response.data.id}`);
               setIsPending(false);
             }

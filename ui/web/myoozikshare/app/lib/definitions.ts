@@ -171,15 +171,34 @@ export type FilesUploadResponse =  {
   postData: MusicPostData;
 };
 
+type MusicSegmentComponent = {
+  title: string,
+  audio: string,
+}
+
+type MusicSegment = {
+  title: string,
+  music_segment_components: MusicSegmentComponent[] | null,
+}
 export type Music = {
+  id: string;
   title: string;
   description: string;
   composer: string;
   score: string;
   audio: string;
   lyrics: string;
-  music_segments: any;
+  music_segments: MusicSegment[] | null;
   is_published: boolean;
   is_visible: boolean;
+  author: string;
   [key: string]: any
+};
+
+export type PaginatedMUsicData = {
+  status: 'success' | 'fail';
+  data: Music[] | null;
+  totalPages: number,
+  currentPage: number,
+  error_messages: string[]  
 }

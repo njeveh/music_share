@@ -22,6 +22,7 @@ Route::middleware(['ensure_json_response'])->group(function (){
         Route::post('/login', [AuthenticatedSessionController::class, 'store']);
         Route::post('/forgot-password', [PasswordResetController::class, 'getPasswordResetCode']);
         Route::post('/reset-password', [PasswordResetController::class, 'store']);
+        Route::get('/music/public', [MusicController::class, 'getFilteredPublicMusic']);
     });
 
     Route::middleware(['auth:sanctum'])->group(function () {

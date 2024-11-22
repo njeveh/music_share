@@ -1,7 +1,7 @@
 "use client"
 
 import Footer from '@/app/ui/components/footer/footer';
-import { SongCard } from '@/app/ui/components/song-card';
+import { SongCard } from '@/app/ui/components/music-card';
 import Link from 'next/link';
 import { ActionsDropdownMenu } from "@/app/ui/components/actions-dropdown-menu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";

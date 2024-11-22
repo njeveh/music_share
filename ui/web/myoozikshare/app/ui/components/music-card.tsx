@@ -1,18 +1,14 @@
+import { Music } from '@/app/lib/definitions';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { MdLibraryMusic } from 'react-icons/md';
   
-  export function SongCard({
-    title,
-    composer,
-    link,
+  export async function MusicCard({
+    music
   }: {
-    title: string;
-    composer: string;
-    link: string;
-
+    music: Music
   }) {
-  
+
     return (
     <>
       <div
@@ -21,21 +17,25 @@ import { MdLibraryMusic } from 'react-icons/md';
           <MdLibraryMusic className='w-20 h-20 md:w-32 md:h-32 text-amber-500' />
         </div>
         <div className='w-full my-2'>
-          <audio controls className='w-full'>
-            <source src='/assets/audio/baraka_top_top.wav' type="audio/wav" />
+          <audio controls className='w-full my-2'>
+            <source src={music.audio} type='audio/mpeg' />
+            <source src={music.audio} type='audio/mp4' />
+            <source src={music.audio} type='audio/ogg' />
+            <source src={music.audio} type='audio/wav' />
+            <source src={music.audio} type='audio/aac' />
+            <source src={music.audio} type='audio/m4a' />
             <p>
-              Your browser doesn't support this audio file. Here is a
-              <a href="/assets/audio/baraka_top_top.wav">link to the audio</a> instead.
+              Your browser doesn't support this audio file.
             </p>
           </audio>
         </div>
         <div className="w-full mb-2">
-          <h3 className="text-sm font-medium">{title}</h3>
-        <div>Composer: {composer}</div>
-        <div>Posted by: Jane Doe</div>
+          <h3 className="text-sm font-medium">{music.title}</h3>
+        <div>Composer: {music.composer}</div>
+        <div>Posted by: {music.author}</div>
         </div>
         <div>
-          <Link href={link}>
+          <Link href={`/music-breakdown/${music.id}`}>
             <Button>See breakdown</Button>
           </Link>
         </div>

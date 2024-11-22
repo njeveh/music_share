@@ -257,7 +257,6 @@ export async function getFilteredMusicGroups(
       return paginatedGroupsReturnData;
     }
     else {
-      throw new Error();
       paginatedGroupsReturnData = {
         status: 'fail',
         data: null,
@@ -268,7 +267,6 @@ export async function getFilteredMusicGroups(
       return paginatedGroupsReturnData;
     }
   } catch (error) {
-    throw error;
       paginatedGroupsReturnData = {
         status: 'fail',
         data: null,

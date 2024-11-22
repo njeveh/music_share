@@ -1,3 +1,5 @@
+import { MdLibraryMusic } from "react-icons/md";
+
 // Loading animation
 const shimmer =
   'before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent';
@@ -29,6 +31,61 @@ export function CardsSkeleton() {
   );
 }
 
+export function MusicCardSkeleton() {
+  return (
+    <div
+      className={`${shimmer} relative overflow-hidden rounded-xl bg-slate-200 dark:bg-gray-700 p-2 shadow-sm`}
+    >
+        <div className='w-full flex justify-center items-center'>
+          <div className='w-20 h-20 md:w-32 md:h-32 rounded-2xl bg-gray-100 dark:bg-gray-500'></div>
+        </div>
+        <div className='w-full my-2'>
+          <div className="w-full h-12 my-2 rounded-3xl bg-gray-100 dark:bg-gray-500"></div>
+        </div>
+        <div className="w-full mb-2 p-2">
+          <h3 className="my-2 w-full h-7 bg-gray-100 dark:bg-gray-500 rounded"></h3>
+          <div className="my-2 w-full h-7 bg-gray-100 dark:bg-gray-500 rounded"></div>
+          <div className="my-2 w-full h-7 bg-gray-100 dark:bg-gray-500 rounded"></div>
+        </div>
+        <div className='w-full flex justify-center items-center'>
+          <div className="bg-white dark:bg-gray-500 h-11 w-40 px-4 py-2 border border-gray-100 rounded-lg">
+            <div className="w-32 h-7 bg-gray-100 dark:bg-gray-300 rounded"></div>
+          </div>
+        </div>        
+      </div>
+  );
+}
+
+export function MusicCardsSkeleton() {
+  return (
+    <>
+      <div className='w-full flex justify-center items-center ssp-font-family p-4 md:p-6'>
+        <div className="w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 min-[500px]:grid-cols-2">   
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+          <MusicCardSkeleton />
+        </div>
+      </div>                          
+    </>
+  );
+}
 export function RevenueChartSkeleton() {
   return (
     <div className={`${shimmer} relative w-full overflow-hidden md:col-span-4`}>

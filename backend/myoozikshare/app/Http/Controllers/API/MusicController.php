@@ -35,7 +35,7 @@ class MusicController extends BaseController
      */
     public function store(Request $request)
     {
-        Log::info($request);
+        //Log::info($request);
 
         $validator = Validator::make($request->all(), [
         'title' => ['required', 'string', 'min:2', 'max:60'],
@@ -108,22 +108,14 @@ class MusicController extends BaseController
             $data = [
                 'music' => $music,
             ];
-            Log::info($data);
+            //Log::info($data);
             return $this->respond($data, 'music added successfully.');
         } catch (\Throwable $th) {
-            Log::info($th);
+            //Log::info($th);
             DB::rollBack();
             return $this->respondWithErrorMessage('Sorry something went wrong, please try again.', BaseApiCodes::EX_UNCAUGHT_EXCEPTION(), 500);
             //throw $th;
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Music $music)
-    {
-        //
     }
 
     /**
@@ -133,11 +125,38 @@ class MusicController extends BaseController
     {
         $user = $request->user();
         $music = $user->music()->where('id', $id)->first();
+        $music->author = $music->user->user_name? $music->user->user_name : $music->user->first_name.$music->user->last_name;
+        $music->user = null;
+        $music_segments = $music->musicSegments;
+        foreach ($music_segments as $key => $music_segment) {
+            $music_segment->music_segment_components = $music_segment->musicSegmentComponents;
+        }
+        $music->music_segments = $music_segments;
         $data = [
             'music' => $music,
         ];
+        Log::info($data);
         return $this->respond($data, '');
     }
+
+    /**
+     * get filtered music groups.
+     */
+    public function getFilteredPublicMusic(Request $request)
+    {
+        $music_data = Music::whereLike(['title', 'description', 'composer', 'lyrics'], $request->query('query') ?? '')
+        ->where('is_published', true)
+        ->where('is_visible', true)
+        ->paginate(50);
+        //Log::info($music_data);
+        foreach ($music_data as $key => $music) {
+            $music->author = $music->user->user_name? $music->user->user_name : $music->user->first_name.$music->user->last_name;
+        }
+        $data = [
+            'music' => $music_data
+        ];
+        return $this->respond($data);
+    }    
     
     /**
      * Show the form for editing the specified resource.

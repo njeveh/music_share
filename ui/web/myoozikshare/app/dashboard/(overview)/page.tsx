@@ -1,6 +1,6 @@
 import Nav from '@/app/ui/dashboard/nav/nav';
 import Footer from '@/app/ui/components/footer/footer';
-import { SongCard } from '@/app/ui/components/song-card';
+import { SongCard } from '@/app/ui/components/music-card';
 
 export default function Page() {
   const cards = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];

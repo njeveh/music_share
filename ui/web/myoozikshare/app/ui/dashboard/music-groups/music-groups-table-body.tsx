@@ -19,7 +19,7 @@ const MusicGroupsTableBody = async ({
   return (
     <>
       <TableBody>
-        { (musicGroups == null) && (
+        { (musicGroups.data == null) && (
         <TableRow>
           <TableCell colSpan={2}>There are no music groups available currently.</TableCell>
         </TableRow>

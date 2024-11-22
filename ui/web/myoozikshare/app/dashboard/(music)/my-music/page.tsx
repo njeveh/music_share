@@ -1,6 +1,6 @@
 import Nav from '@/app/ui/dashboard/nav/nav';
 import Footer from '@/app/ui/components/footer/footer';
-import { SongCard } from '@/app/ui/components/song-card';
+import { SongCard } from '@/app/ui/components/music-card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 

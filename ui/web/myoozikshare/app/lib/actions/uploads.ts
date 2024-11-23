@@ -31,9 +31,9 @@ async function UploadScore(inputs: Inputs, action: 'new' | 'update'): Promise<bo
       formData.append('file', inputs.score.file);
       if (action === 'update') {
         formData.append('public_id', inputs.score.publicId);
-        formData.append('overwrite', 'true');
       }
       const result = await UploadScoreFile(formData);
+      //console.log(result);
       if(result.success){
         if (action === 'new') {
           uploadedFiles.push(result.publicId);
@@ -66,9 +66,10 @@ async function UploadMainAudio(inputs: Inputs, action: 'new' | 'update'): Promis
       formData.append('file', inputs.audioFile.file);
       if (action === 'update') {
         formData.append('public_id', inputs.score.publicId);
-        formData.append('overwrite', 'true');
+        formData.append('filename_override', 'true');
       }      
       const result = await UploadAudioFile(formData);
+     // console.log(result);
       if(result.success){
         if (action === 'new') {
           uploadedAudios.push(result.publicId);
@@ -185,9 +186,10 @@ export async function UploadUpdatedFiles(inputs: Inputs): Promise<FilesUploadRes
     uploadedFiles: uploadedFiles,
     postData: postData,
   }
+
   try { 
     if(inputs.score.file && inputs.score.publicId ) {
-      await UploadScore(inputs, 'update');    
+      await UploadScore(inputs, 'update');  
     }
     else {
       postData.score = {
@@ -196,7 +198,7 @@ export async function UploadUpdatedFiles(inputs: Inputs): Promise<FilesUploadRes
       }
     }
     if(inputs.audioFile.file && inputs.audioFile.publicId ) {
-      await UploadMainAudio(inputs, 'update');      
+      await UploadMainAudio(inputs, 'update');    
     }
     else {
       postData.audio = {
@@ -235,7 +237,6 @@ export async function UploadUpdatedFiles(inputs: Inputs): Promise<FilesUploadRes
           formData.append('file', file);
           if (publicId) {
             formData.append('public_id', publicId);
-            formData.append('overwrite', 'true');
           }
           const res = await UploadAudioFile(formData)
           if(res.success){
@@ -299,7 +300,6 @@ export async function UploadScoreFile(formData: FormData): Promise<CloudUploadRe
     );
     const uploadedScoreData = await uploadResponse.json();
 
-    // console.log(uploadedScoreData);
 
   if (uploadedScoreData.secure_url) {
     cloudUploadReturnData = {
@@ -351,7 +351,7 @@ export async function UploadAudioFile(formData: FormData): Promise<CloudUploadRe
   }
   return cloudUploadReturnData;
   } catch (error) {
-    console.error(error);
+    //console.error(error);
       cloudUploadReturnData = {
         success: false,
         publicId: '',

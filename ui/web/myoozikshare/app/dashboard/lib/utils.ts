@@ -5,7 +5,6 @@ import {
 import { RefObject } from "react";
 type Setter = React.Dispatch < React.SetStateAction < Inputs >>;
 type PreviewUrlSetter = React.Dispatch < React.SetStateAction < string >>;
-// Dispatch<SetStateAction<string>>
 
   // add a segment
   const AddSegment = (data: Inputs, setter: Setter) => {
@@ -25,6 +24,7 @@ type PreviewUrlSetter = React.Dispatch < React.SetStateAction < string >>;
               url: '',
               previewUrl: '',
               uploadUrl: '',
+              publicId: '',
             },
             inputErrors: {
               segmentComponentTitle: '',
@@ -52,6 +52,7 @@ type PreviewUrlSetter = React.Dispatch < React.SetStateAction < string >>;
                 url: '',
                 previewUrl: '',
                 uploadUrl: '',
+                publicId: '',
               },
               inputErrors: {
                 segmentComponentTitle: '',
@@ -77,6 +78,7 @@ const AddSegmentComponent = (data: Inputs, setter: Setter, index: any) => {
         url: '',
         previewUrl: '',
         uploadUrl: '',
+        publicId: '',
       },
       inputErrors: {
         segmentComponentTitle: '',
@@ -95,6 +97,7 @@ const AddSegmentComponent = (data: Inputs, setter: Setter, index: any) => {
           url: '',
           previewUrl: '',
           uploadUrl: '',
+          publicId: '',
         },
         inputErrors: {
           segmentComponentTitle: '',

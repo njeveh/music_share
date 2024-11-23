@@ -39,13 +39,14 @@ const HandleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>)
                 url: values.audioFile.url,
                 previewUrl: previewUrl,
                 uploadUrl: '',
+                publicId: values.audioFile.publicId,
               }
             }));
           }else {
             const newInputs = {...inputs};
             newInputs.segments[SegmentIndex].segmentComponents[segmentComponentIndex].audioFile = {
+              ...newInputs.segments[SegmentIndex].segmentComponents[segmentComponentIndex].audioFile,
               file: file,
-              url: newInputs.segments[SegmentIndex].segmentComponents[segmentComponentIndex].audioFile.url,
               previewUrl: previewUrl,
               uploadUrl: '',
             };

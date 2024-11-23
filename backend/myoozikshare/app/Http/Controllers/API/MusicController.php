@@ -250,11 +250,11 @@ class MusicController extends BaseController
  * Implement functinality to remove uploaded files from cloudinary once components and segments are deleted.
  */
                 $music_segment_components = $music_segment['music_segment_components'];
-                $current_segment_components_ids = $music->musicSegmentComponents()->get()->modelKeys();
+                $current_segment_components_ids = $stored_music_segment->musicSegmentComponents()->get()->modelKeys();
                 $retained_segment_components_ids = [];
                 foreach ($music_segment_components as $key => $music_segment_component) {
                     if ($music_segment_component['id'] && in_array($music_segment_component['id'], $current_segment_components_ids)){
-                        array_push($retained_segment_components_ids, $music_segment['id']);
+                        array_push($retained_segment_components_ids, $music_segment_component['id']);
                         $stored_music_segment_component = MusicSegmentComponent::find($music_segment_component['id']);
                         $stored_music_segment_component->update([
                             'title' => $music_segment_component['title'],
@@ -272,6 +272,9 @@ class MusicController extends BaseController
                     }
                 }
                 $removed_segment_components_ids = array_diff($current_segment_components_ids, $retained_segment_components_ids);
+                Log::info($current_segment_components_ids);
+                Log::info($retained_segment_components_ids);
+                Log::info($removed_segment_components_ids);
                 MusicSegmentComponent::destroy($removed_segment_components_ids);
             }
 

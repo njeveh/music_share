@@ -25,6 +25,7 @@ import { AddSegment, AddSegmentComponent, RemoveScoreSelectedForUpload, RemoveSe
 import { UploadUpdatedFiles } from "@/app/lib/actions/uploads";
 import { DeleteFiles } from "@/app/lib/actions/upload-to-cloud";
 import { UpDateMusic } from "@/app/lib/actions/music";
+import { url } from "inspector";
 
 export default function MusicReviewForm({
   music,
@@ -85,6 +86,8 @@ export default function MusicReviewForm({
               file: file,
               previewUrl: previewUrl,
               uploadUrl: '',
+              url: values.score.url,
+              publicId: values.score.publicId
             }
           }));
         }
@@ -92,7 +95,7 @@ export default function MusicReviewForm({
 
     const HandleSubmit = async (event: React.FormEvent < HTMLFormElement > ) => {
       event.preventDefault();
-      // console.log(inputs);
+      //console.log(inputs);
       //return;
       setIsPending(true);
       setApiErrorMessages({
@@ -106,6 +109,7 @@ export default function MusicReviewForm({
         inputs.inputErrors.score == '' &&
         inputs.inputErrors.audioFile == ''
       ) {
+        //console.log(inputs);
         const result = await UploadUpdatedFiles(inputs);
         if (result.success) {          
           const finalPostData = {
@@ -122,7 +126,8 @@ export default function MusicReviewForm({
           if (response !== void({})) {
             // console.log(res.data);
             if (response.status === 'fail') {
-              await DeleteFiles(result.uploadedAudios);
+              const status = (await DeleteFiles(result.uploadedAudios));
+              //console.log(status);
               await DeleteFiles(result.uploadedFiles);
               setApiErrorMessages({
                 status: 'fail',

@@ -78,6 +78,7 @@ const AddMusicForm = (
               url: values.score.url,
               previewUrl: previewUrl,
               uploadUrl: '',
+              publicId: '',
             }
           }));
         }

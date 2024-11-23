@@ -87,7 +87,7 @@ type InputFile = {
   url: string;
   previewUrl: string;
   uploadUrl: string;
-  [key: string]: any
+  publicId: string;
 };
 
 type SegmentComponentInputErrors = {

@@ -81,13 +81,14 @@ const AudioRecorder = ({
               url: prevState.audioFile.url,
               previewUrl: playableUrl,
               uploadUrl: '',
+              publicId: prevState.audioFile.publicId,
             }
           }));
         }else {
             const newInputs = {...inputs};
             newInputs.segments[SegmentIndex].segmentComponents[segmentComponentIndex].audioFile = {
+              ...newInputs.segments[SegmentIndex].segmentComponents[segmentComponentIndex].audioFile,
               file: audioBlob,
-              url: newInputs.segments[SegmentIndex].segmentComponents[segmentComponentIndex].audioFile.url,
               previewUrl: playableUrl,
               uploadUrl: '',
             };

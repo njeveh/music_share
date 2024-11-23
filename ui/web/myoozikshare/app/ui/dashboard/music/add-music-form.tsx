@@ -19,7 +19,7 @@ import { initialInputs, initialMusicPostData } from '@/app/dashboard/lib/data';
 import { UploadMusic } from '@/app/lib/actions/music';
 import ApiFeedbackAlertDialog from '../../components/api-feedback-alert-dialog';
 import FullPageLoadingIndicator from '../../components/loading-state-indicators/full-page-loading-indicator';
-import UploadFiles from '@/app/lib/actions/uploads';
+import { UploadFiles } from '@/app/lib/actions/uploads';
 import { DeleteFiles } from '@/app/lib/actions/upload-to-cloud';
 
 const AddMusicForm = (

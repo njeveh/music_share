@@ -24,22 +24,30 @@ const uploadedAudios: string[] = [];
 const postData: MusicPostData = initialMusicPostData;
 
 /**Upload music score */
-async function UploadScore(inputs: Inputs): Promise<boolean>{
+async function UploadScore(inputs: Inputs, action: 'new' | 'update'): Promise<boolean>{
   try {
     if (inputs.score.file !== null) {
       const formData = new FormData();
       formData.append('file', inputs.score.file);
+      if (action === 'update') {
+        formData.append('public_id', inputs.score.publicId);
+        formData.append('overwrite', 'true');
+      }
       const result = await UploadScoreFile(formData);
       if(result.success){
-        uploadedFiles.push(result.publicId);
+        if (action === 'new') {
+          uploadedFiles.push(result.publicId);
+        }
         postData.score = {
           url: result.url,
           public_id: result.publicId
         }
         return true;                  
       }else{
-        await DeleteFiles(uploadedFiles);
-        await DeleteFiles(uploadedAudios);
+        if (action === 'new') {
+          await DeleteFiles(uploadedFiles);
+          await DeleteFiles(uploadedAudios);
+        }
         return false;
       }
     }else{
@@ -51,22 +59,30 @@ async function UploadScore(inputs: Inputs): Promise<boolean>{
 }
 
 /**Upload the main music audio */
-async function UploadMainAudio(inputs: Inputs): Promise<boolean>{
+async function UploadMainAudio(inputs: Inputs, action: 'new' | 'update'): Promise<boolean>{
   try {
     if (inputs.audioFile.file !== null) {
       const formData = new FormData();
       formData.append('file', inputs.audioFile.file);
+      if (action === 'update') {
+        formData.append('public_id', inputs.score.publicId);
+        formData.append('overwrite', 'true');
+      }      
       const result = await UploadAudioFile(formData);
       if(result.success){
-        uploadedAudios.push(result.publicId);
+        if (action === 'new') {
+          uploadedAudios.push(result.publicId);
+        }
         postData.audio = {
           url: result.url,
           public_id: result.publicId
         }
         return true;                  
       }else{
-        await DeleteFiles(uploadedAudios);
-        await DeleteFiles(uploadedFiles);
+        if (action === 'new') {
+          await DeleteFiles(uploadedFiles);
+          await DeleteFiles(uploadedAudios);
+        }
         return false;
       }
     }else{
@@ -77,10 +93,10 @@ async function UploadMainAudio(inputs: Inputs): Promise<boolean>{
     }
 }
 // upload music files to cloud
-export default async function UploadFiles (inputs: Inputs): Promise<FilesUploadResponse> {
+export async function UploadFiles (inputs: Inputs): Promise<FilesUploadResponse> {
   try {          
-    if (await UploadScore(inputs)) {
-      if (await UploadMainAudio(inputs)) {
+    if (await UploadScore(inputs, 'new')) {
+      if (await UploadMainAudio(inputs, 'new')) {
         for (let segmentIndex = 0; segmentIndex < inputs.segments.length; segmentIndex++) {
           if (!postData.music_segments[segmentIndex]){
             postData.music_segments[segmentIndex] = {
@@ -102,9 +118,10 @@ export default async function UploadFiles (inputs: Inputs): Promise<FilesUploadR
 
           let segmentComponents = inputs.segments[segmentIndex].segmentComponents;
           for (let segmentComponentIndex = 0; segmentComponentIndex < segmentComponents.length; segmentComponentIndex++) {
-            if (segmentComponents[segmentComponentIndex].audioFile.file !== null) {             
+            const file = segmentComponents[segmentComponentIndex].audioFile.file;
+            if (file) {             
               const formData = new FormData();
-              formData.append('file', segmentComponents[segmentComponentIndex].audioFile.file);
+              formData.append('file', file);
               const res = await UploadAudioFile(formData)
               if(res.success){
                 uploadedAudios.push(res.publicId);
@@ -158,6 +175,119 @@ export default async function UploadFiles (inputs: Inputs): Promise<FilesUploadR
     return filesUploadReturnData;
   }
 }
+
+
+// upload updated music files to cloud
+export async function UploadUpdatedFiles(inputs: Inputs): Promise<FilesUploadResponse> {
+  filesUploadReturnData = {
+    success: true,
+    uploadedAudios: uploadedAudios,
+    uploadedFiles: uploadedFiles,
+    postData: postData,
+  }
+  try { 
+    if(inputs.score.file && inputs.score.publicId ) {
+      await UploadScore(inputs, 'update');    
+    }
+    else {
+      postData.score = {
+        url: inputs.score.url,
+        public_id: inputs.score.publicId
+      }
+    }
+    if(inputs.audioFile.file && inputs.audioFile.publicId ) {
+      await UploadMainAudio(inputs, 'update');      
+    }
+    else {
+      postData.audio = {
+        url: inputs.audioFile.url,
+        public_id: inputs.audioFile.publicId
+      }
+    } 
+    for (let segmentIndex = 0; segmentIndex < inputs.segments.length; segmentIndex++) {
+      if (!postData.music_segments[segmentIndex]){
+        postData.music_segments[segmentIndex] = {
+          id: '',
+          title: '',
+          music_segment_components: [{
+            id: '',
+            title: '',
+            audio: {
+              url: '',
+              public_id: ''
+            }
+          }]
+        }
+      }            
+      
+      postData.music_segments[segmentIndex] = {
+        ...postData.music_segments[segmentIndex],
+        id: inputs.segments[segmentIndex].id,
+        title: inputs.segments[segmentIndex].segmentTitle
+      };
+
+      let segmentComponents = inputs.segments[segmentIndex].segmentComponents;
+      for (let segmentComponentIndex = 0; segmentComponentIndex < segmentComponents.length; segmentComponentIndex++) {
+        const file = segmentComponents[segmentComponentIndex].audioFile.file;
+        const publicId = segmentComponents[segmentComponentIndex].audioFile.publicId;
+        if (file) {             
+          const formData = new FormData();
+          formData.append('file', file);
+          if (publicId) {
+            formData.append('public_id', publicId);
+            formData.append('overwrite', 'true');
+          }
+          const res = await UploadAudioFile(formData)
+          if(res.success){
+            if (!publicId) {
+              uploadedAudios.push(res.publicId);
+            }
+            postData.music_segments[segmentIndex].music_segment_components[segmentComponentIndex] = {
+              id: segmentComponents[segmentComponentIndex].id || '', 
+              title: segmentComponents[segmentComponentIndex].segmentComponentTitle,
+              audio: {
+                url: res.url,
+                public_id: res.publicId
+              }
+            };             
+          }else{
+            if (!publicId) {
+              await DeleteFiles(uploadedAudios)
+              await DeleteFiles(uploadedFiles)
+            }            
+            throw new Error('');
+          }
+        } else {
+          postData.music_segments[segmentIndex].music_segment_components[segmentComponentIndex] = {
+            id: segmentComponents[segmentComponentIndex].id, 
+            title: segmentComponents[segmentComponentIndex].segmentComponentTitle,
+            audio: {
+              url: segmentComponents[segmentComponentIndex].audioFile.url,
+              public_id: segmentComponents[segmentComponentIndex].audioFile.publicId,
+            }
+          };          
+        }
+      }
+    }
+    filesUploadReturnData = {
+      success: true,
+      uploadedAudios: uploadedAudios,
+      uploadedFiles: uploadedFiles,
+      postData: postData,
+    }     
+    return filesUploadReturnData; 
+  } catch (error) {
+    //console.error(error);
+    filesUploadReturnData = {
+      success: false,
+      uploadedAudios: [],
+      uploadedFiles: [],
+      postData: initialMusicPostData,
+    }
+    return filesUploadReturnData;
+  }
+}
+
 export async function UploadScoreFile(formData: FormData): Promise<CloudUploadResponse> {
   try {
   // formData.append('file', file);

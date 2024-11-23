@@ -61,6 +61,57 @@ export async function UploadMusic(postData: MusicPostData): Promise<ReturnData> 
   }
 }
 
+export async function UpDateMusic(postData: MusicPostData, id: string): Promise<ReturnData> {
+  //console.log(postData);
+  // return returnData;
+  try {
+    const session = (await auth());
+    const token = session?.user.accessToken;
+    const response = await fetch(`${process.env.BACKEND_API_URL}/music/my-music/${id}/update`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(postData),
+    });
+    //console.log(response.status);
+    const result = await response.json();
+    //console.log(result.data);
+
+    if (response.status == 403) {
+      //return validation errors
+      returnData = {
+        status: 'fail',
+        data: {},
+        error_messages: result.data.values
+      }
+    } else if (response.status == 200) {
+      //console.log(result);
+      returnData = {
+        status: 'success',
+        data: null,
+        error_messages: []
+      }
+    } else {
+      returnData = {
+        status: 'fail',
+        data: {},
+        error_messages: ["Sorry an error occured while updating your music data. Please try again."]
+      }
+    }
+    return returnData;
+  } catch (error) {
+      returnData = {
+        status: 'fail',
+        data: {},
+        error_messages: ["Sorry an error occured while updating your music data. Please try again."]
+      }
+      return returnData;
+    //throw error;
+  }
+}
+
 export async function getMyMusic(id: any): Promise<Music> {
   try {
     const session = (await auth());
@@ -112,7 +163,7 @@ export async function getFormatMyMusic(id: any): Promise<Inputs> {
           if (components && components.length > 0) {
             components.forEach((component: any) => {
               const music_segment_component: SegmentComponent = {
-                id: segment.id,
+                id: component.id,
                 status: null,
                 segmentComponentTitle: component.title,
                 audioFile: {
@@ -120,6 +171,7 @@ export async function getFormatMyMusic(id: any): Promise<Inputs> {
                   url: component.audio,
                   previewUrl: '',
                   uploadUrl: '',
+                  publicId: component.audio_public_id,
                 },
                 inputErrors: {
                     segmentComponentTitle: '',
@@ -140,6 +192,7 @@ export async function getFormatMyMusic(id: any): Promise<Inputs> {
         });
       }
       const formatedMusicData: Inputs = {
+        id: music.id,
         title: music.title,
         description: music.description,
         composer: music.composer,
@@ -147,13 +200,15 @@ export async function getFormatMyMusic(id: any): Promise<Inputs> {
           file: null,
           url: music.score,
           previewUrl: '',
-          uploadUrl: ''
+          uploadUrl: '',
+          publicId: music.score_public_id,
         },
         audioFile: {
           file: null,
           url: music.audio,
           previewUrl: '',
-          uploadUrl: ''
+          uploadUrl: '',
+          publicId: music.audio_public_id,
         },
         lyrics: music.lyrics,
         segments: music_segments,
@@ -169,7 +224,7 @@ export async function getFormatMyMusic(id: any): Promise<Inputs> {
         visible: music.is_visible,
         musicGroupsToShareWith: music.music_groups_shared_with
       };
-      console.log(formatedMusicData);
+      //console.log(formatedMusicData);
       return formatedMusicData;
     }
     else {

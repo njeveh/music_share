@@ -14,9 +14,11 @@ type PreviewUrlSetter = React.Dispatch < React.SetStateAction < string >>;
         ...values,
         segments: [{
           status: null,
+          id: '',
           segmentTitle: '',
           segmentComponents: [{
             status: null,
+            id: '',
             segmentComponentTitle: '',
             audioFile: {
               file: null,
@@ -39,9 +41,11 @@ type PreviewUrlSetter = React.Dispatch < React.SetStateAction < string >>;
           ...values.segments,
           {
             status: null,
+            id: '',
             segmentTitle: '',
             segmentComponents: [{
               status: null,
+              id: '',
               segmentComponentTitle: '',
               audioFile: {
                 file: null,
@@ -66,6 +70,7 @@ const AddSegmentComponent = (data: Inputs, setter: Setter, index: any) => {
   if (data.segments[index].segmentComponents.length == 0) {
     data.segments[index].segmentComponents = [{
       status: null,
+      id: '',
       segmentComponentTitle: '',
       audioFile: {
         file: null,
@@ -83,6 +88,7 @@ const AddSegmentComponent = (data: Inputs, setter: Setter, index: any) => {
       ...data.segments[index].segmentComponents,
       {
         status: null,
+        id: '',
         segmentComponentTitle: '',
         audioFile: {
           file: null,

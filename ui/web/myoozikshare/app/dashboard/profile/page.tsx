@@ -3,17 +3,6 @@ import ApiFeedbackAlertDialog from "@/app/ui/components/api-feedback-alert-dialo
 import DeleteUserForm from "@/app/ui/dashboard/profile/delete-user-form";
 import UpdateUserPasswordForm from "@/app/ui/dashboard/profile/update-user-password-form";
 import UpdateUserProfileInformationForm from "@/app/ui/dashboard/profile/update-user-profile-information-form";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { useRef, useState } from "react";
 
 const Page = () => {

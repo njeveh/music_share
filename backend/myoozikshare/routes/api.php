@@ -52,5 +52,6 @@ Route::middleware(['ensure_json_response'])->group(function (){
         Route::post('/music/upload', [MusicController::class, 'store']);
         Route::get('/music/my-music', [MusicController::class, 'getUserFilteredmusic']);
         Route::get('/music/my-music/{id}', [MusicController::class, 'getMymusic']);
+        Route::put('/music/my-music/{id}/update', [MusicController::class, 'update']);
     });
 });

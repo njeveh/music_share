@@ -72,14 +72,14 @@ const Page = async ({
             <div className="pt-4">
               <div className="font-bold">Breakdown</div>
               {music.music_segments !== null && music.music_segments.length > 0 && (
-                <>
+                <div>
                 {music.music_segments.map((segment) => (
-                  <div className="mt-2 border p-2 rounded-lg  bg-slate-200 dark:bg-gray-900">
+                  <div key={segment.id} className="mt-2 border p-2 rounded-lg  bg-slate-200 dark:bg-gray-900">
                     <div className="w-full flex justify-center items-center text-amber-600 text-2xl font-bold">{segment.title}</div>
                     {segment.music_segment_components !== null && segment.music_segment_components.length > 0 && (
-                      <>
+                      <div>
                         {segment.music_segment_components.map((component) => (
-                          <div className="p-2">
+                          <div key={component.id} className="p-2">
                             <div className="w-full flex justify-start items-center text-lg font-bold" >{component.title}:</div>
                             <div className="mb-2">
                               <div className='w-full my-2'>
@@ -98,12 +98,12 @@ const Page = async ({
                             </div>                            
                           </div>
                         ))}
-                      </>
+                      </div>
                     )}
                   </div>
                   
                 ))}
-                </>
+                </div>
               )}
             </div>
           </CardContent>

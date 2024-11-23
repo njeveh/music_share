@@ -45,8 +45,10 @@ const initialMusicPostData: MusicPostData = {
   },
   lyrics: '',
   music_segments: [{
+    id: '',
     title: '',
     music_segment_components: [{
+      id: '',
       title: '',
       audio: {
         url: '',

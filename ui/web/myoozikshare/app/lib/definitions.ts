@@ -87,6 +87,7 @@ type InputFile = {
   url: string;
   previewUrl: string;
   uploadUrl: string;
+  [key: string]: any
 };
 
 type SegmentComponentInputErrors = {
@@ -131,6 +132,7 @@ export type Inputs = {
   publish: boolean;
   visible: boolean;
   musicGroupsToShareWith: string[];
+  [key: string]: any
 };
 
 export type CloudUploadResponse =  {
@@ -148,11 +150,13 @@ type PostDataFile = {
 type PostDataSegmentComponent = {
   title: string;
   audio: PostDataFile;
+  [key: string]: any
 };
 
 type PostDataSegment = {
   title: string;
   music_segment_components: PostDataSegmentComponent[];
+  [key: string]: any
 };
 export type MusicPostData = {
   title: string;
@@ -175,11 +179,13 @@ export type FilesUploadResponse =  {
 };
 
 type MusicSegmentComponent = {
+  id: string;
   title: string,
   audio: string,
 }
 
 type MusicSegment = {
+  id: string;
   title: string,
   music_segment_components: MusicSegmentComponent[] | null,
 }

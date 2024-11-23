@@ -188,9 +188,124 @@ class MusicController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Music $music)
+    public function update(Request $request, $id)
     {
-        //
+        Log::info($request);
+
+        $validator = Validator::make($request->all(), [
+        'title' => ['required', 'string', 'min:2', 'max:60'],
+        'description' => ['required', 'string'],
+        'composer' => ['required', 'string', 'min:2', 'max:60'],
+        'score.url' => ['required', 'url'],
+        'score.public_id' => ['required', 'string'],
+        'audio.url' => ['required', 'url'],
+        'audio.public_id' => ['required', 'string'],
+        'lyrics' => ['required', 'string'],
+        'is_visible' => ['required', 'boolean'],
+        'is_published' => ['required', 'boolean'],
+        'segments.*.title' => ['required', 'string',],
+        'segments.*.segment_component.*.title' => ['required', 'string',],
+        'segments.*.segment_component.*.audio.url' => ['required', 'url',],
+        'segments.*.segment_component.*.audio.public_id' => ['required', 'url',],
+        ]);
+
+        if ($validator->fails()) {
+            $error_messages = $validator->errors()->all();
+            return $this->respondWithValidationErrors($error_messages, BaseApiCodes::EX_VALIDATION_EXCEPTION(), 403);
+        }
+        try {
+            DB::beginTransaction();
+            $music = Music::find($id);
+            $music->update([
+                'title' => $request->title,
+                'description' => $request->description,
+                'composer' => $request->composer,
+                'score' => $request->score['url'],
+                'score_public_id' => $request->score['public_id'],
+                'audio' => $request->audio['url'],
+                'audio_public_id' => $request->audio['public_id'],
+                'lyrics' => $request->lyrics,
+                'is_visible' => $request->is_visible,
+                'is_published' => $request->is_published,
+            ]);
+            $music_segments = $request->music_segments;
+            $current_segments_ids = $music->musicSegments()->get()->modelKeys();
+            $retained_segments_ids = [];
+
+            foreach ($music_segments as $key => $music_segment) {
+                if ($music_segment['id'] && in_array($music_segment['id'], $current_segments_ids)){
+                    array_push($retained_segments_ids, $music_segment['id']);
+                    $stored_music_segment = MusicSegment::find($music_segment['id']);
+                    $stored_music_segment->update([
+                        'title' => $music_segment['title']
+                    ]);
+                }else{
+                    $stored_music_segment = MusicSegment::create([
+                        'music_id' => $music->id,
+                        'title' => $music_segment['title']
+                    ]);
+                    array_push($retained_segments_ids, $stored_music_segment->id);
+                }
+/**
+ * Implement functinality to remove uploaded files from cloudinary once components and segments are deleted.
+ */
+                $music_segment_components = $music_segment['music_segment_components'];
+                $current_segment_components_ids = $music->musicSegmentComponents()->get()->modelKeys();
+                $retained_segment_components_ids = [];
+                foreach ($music_segment_components as $key => $music_segment_component) {
+                    if ($music_segment_component['id'] && in_array($music_segment_component['id'], $current_segment_components_ids)){
+                        array_push($retained_segment_components_ids, $music_segment['id']);
+                        $stored_music_segment_component = MusicSegmentComponent::find($music_segment_component['id']);
+                        $stored_music_segment_component->update([
+                            'title' => $music_segment_component['title'],
+                            'audio' => $music_segment_component['audio']['url'],
+                            'audio_public_id' => $music_segment_component['audio']['public_id'],
+                        ]);
+                    }else{
+                        $stored_music_segment_component = MusicSegmentComponent::create([
+                            'music_segment_id' => $stored_music_segment->id,
+                            'title' => $music_segment_component['title'],
+                            'audio' => $music_segment_component['audio']['url'],
+                            'audio_public_id' => $music_segment_component['audio']['public_id'],
+                        ]);
+                        array_push($retained_segment_components_ids, $stored_music_segment_component->id);
+                    }
+                }
+                $removed_segment_components_ids = array_diff($current_segment_components_ids, $retained_segment_components_ids);
+                MusicSegmentComponent::destroy($removed_segment_components_ids);
+            }
+
+            $removed_segments_ids = array_diff($current_segments_ids, $retained_segments_ids);
+            MusicSegment::destroy($removed_segments_ids);
+
+            $music_groups_to_share_with = $request->music_groups_to_share_with;
+            $music_groups_shared_with = $music->musicGroupMusic()->get()->modelKeys();
+            if (count($music_groups_to_share_with)){
+                foreach ($music_groups_to_share_with as $key => $music_group_to_share_with) {
+                    if(!in_array($music_group_to_share_with, $music_groups_shared_with )) {
+                        MusicGroupMusic::create([
+                            'music_id' => $music->id,
+                            'music_group_id' => $music_group_to_share_with,
+                        ]);                    
+                    }
+                }
+                $to_unshare = array_diff($music_groups_shared_with, $music_groups_to_share_with);
+                MusicGroupMusic::destroy($to_unshare);
+            }else{
+                MusicGroupMusic::destroy($music_groups_shared_with);
+            }
+            DB::commit();
+            // $data = [
+            //     'music' => $music,
+            // ];
+            //Log::info($data);
+            return $this->respondWithMessage('music updated successfully.');
+        } catch (\Throwable $th) {
+            Log::info($th);
+            DB::rollBack();
+            return $this->respondWithErrorMessage('Sorry something went wrong, please try again.', BaseApiCodes::EX_UNCAUGHT_EXCEPTION(), 500);
+            //throw $th;
+        }
     }
 
     /**

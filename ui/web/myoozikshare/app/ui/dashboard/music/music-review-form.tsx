@@ -22,6 +22,9 @@ import FullPageLoadingIndicator from "../../components/loading-state-indicators/
 import ApiFeedbackAlertDialog from "../../components/api-feedback-alert-dialog";
 import { lusitana } from "../../fonts";
 import { AddSegment, AddSegmentComponent, RemoveScoreSelectedForUpload, RemoveSegment, RemoveSegmentComponent } from "@/app/dashboard/lib/utils";
+import { UploadUpdatedFiles } from "@/app/lib/actions/uploads";
+import { DeleteFiles } from "@/app/lib/actions/upload-to-cloud";
+import { UpDateMusic } from "@/app/lib/actions/music";
 
 export default function MusicReviewForm({
   music,
@@ -88,64 +91,63 @@ export default function MusicReviewForm({
     }
 
     const HandleSubmit = async (event: React.FormEvent < HTMLFormElement > ) => {
-      // event.preventDefault();
-      // // console.log(inputs);
-      // //return;
-      // setIsPending(true);
-      // setApiErrorMessages({
-      //   status: '',
-      //   messages: ['']
-      // });
+      event.preventDefault();
+      // console.log(inputs);
+      //return;
+      setIsPending(true);
+      setApiErrorMessages({
+        status: '',
+        messages: ['']
+      });
 
-      // if (
-      //   inputs.inputErrors.title == '' &&
-      //   inputs.inputErrors.composer == '' &&
-      //   inputs.inputErrors.score == '' &&
-      //   inputs.inputErrors.audioFile == ''
-      // ) {
-      //   const result = await UploadFiles(inputs);
-      //   if (result.success) {
-      //     const finalPostData = {
-      //       ...result.postData,
-      //       title: inputs.title,
-      //       description: inputs.description,
-      //       composer: inputs.composer,
-      //       lyrics: inputs.lyrics,
-      //       is_published: inputs.publish,
-      //       is_visible: inputs.visible,
-      //       music_groups_to_share_with: inputs.musicGroupsToShareWith,
-      //     }
-      //     const response = await UploadMusic(finalPostData);
-      //     if (response !== void({})) {
-      //       // console.log(res.data);
-      //       if (response.status === 'fail') {
-      //         await DeleteFiles(result.uploadedAudios);
-      //         await DeleteFiles(result.uploadedFiles);
-      //         setApiErrorMessages({
-      //           status: 'fail',
-      //           messages: response.error_messages
-      //         });
-      //         setIsPending(false);
-      //         alertDialogTrigger.current?.click();
-      //         return;
-      //       } else if (response.status === 'success') {
-      //         //console.log(response.data);
-      //         router.push(`/dashboard/my-music/${response.data.id}`);
-      //         setIsPending(false);
-      //       }
-      //     }
-      //     setIsPending(false);
-      //     return;
-      //   }else{
-      //     setApiErrorMessages({
-      //       status: 'fail',
-      //       messages: ['Sorry an error occured while uploading your data. Please try again.']
-      //     });
-      //     setIsPending(false);
-      //     alertDialogTrigger.current?.click();
-      //     return;          
-      //   }
-      // }
+      if (
+        inputs.inputErrors.title == '' &&
+        inputs.inputErrors.composer == '' &&
+        inputs.inputErrors.score == '' &&
+        inputs.inputErrors.audioFile == ''
+      ) {
+        const result = await UploadUpdatedFiles(inputs);
+        if (result.success) {          
+          const finalPostData = {
+            ...result.postData,
+            title: inputs.title,
+            description: inputs.description,
+            composer: inputs.composer,
+            lyrics: inputs.lyrics,
+            is_published: inputs.publish,
+            is_visible: inputs.visible,
+            music_groups_to_share_with: inputs.musicGroupsToShareWith,
+          }
+          const response = await UpDateMusic(finalPostData, music.id);
+          if (response !== void({})) {
+            // console.log(res.data);
+            if (response.status === 'fail') {
+              await DeleteFiles(result.uploadedAudios);
+              await DeleteFiles(result.uploadedFiles);
+              setApiErrorMessages({
+                status: 'fail',
+                messages: response.error_messages
+              });
+              setIsPending(false);
+              alertDialogTrigger.current?.click();
+              return;
+            } else if (response.status === 'success') {
+              //console.log(response.data);
+              location.reload();
+            }
+          }
+          setIsPending(false);
+          return;
+        }else{
+          setApiErrorMessages({
+            status: 'fail',
+            messages: ['Sorry an error occured while uploading your data. Please try again.']
+          });
+          setIsPending(false);
+          alertDialogTrigger.current?.click();
+          return;          
+        }
+      }
     }    
 
 return (
@@ -164,7 +166,7 @@ return (
             <div className='w-full lg:w-3/4'>
               <div className="w-full mb-4">
                 <TextInput label="Title" type="text" id="title" name="title" placeholder="Music title" required
-                  autoComplete="on" value={inputs.title || '' } onChange={HandleInputChange} autoFocus />
+                  autoComplete="on" value={inputs.title || '' } onChange={HandleInputChange} />
                 <div className={ inputs.inputErrors.title ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>
                   {inputs.inputErrors.title}
                 </div>
@@ -186,7 +188,7 @@ return (
             </div>
           </div>
           <div className="w-full mb-4">
-            <FileInput ref={scoreRef} label="Score" id="score" name="score" required
+            <FileInput ref={scoreRef} label="Score" id="score" name="score"
               onChange={HandleScoreInputChange} accept="image/png, image/jpg, image/jpeg, .pdf" />
                 <div className="my-2 w-fit flex justify-center items-start gap-8">
                   <Link href={music.score.url} target="__blank"
@@ -291,21 +293,23 @@ return (
                       </div>
                       <div className="w-full mb-4">
                         <div className='mb-1 mt-4 block text-sm font-medium'>Audio:<span className="text-red-600">*</span></div>
-                        <div className="mb-2">
-                          <div className='w-full my-2'>
-                            <audio controls className='w-full my-2'>
-                              <source src={segmentComponent.audioFile.url} type='audio/mpeg' />
-                              <source src={segmentComponent.audioFile.url} type='audio/mp4' />
-                              <source src={segmentComponent.audioFile.url} type='audio/ogg' />
-                              <source src={segmentComponent.audioFile.url} type='audio/wav' />
-                              <source src={segmentComponent.audioFile.url} type='audio/aac' />
-                              <source src={segmentComponent.audioFile.url} type='audio/m4a' />
-                              <p>
-                                Your browser doesn't support this audio file.
-                              </p>
-                            </audio>
+                        {segmentComponent.audioFile.url && 
+                          <div className="mb-2">
+                            <div className='w-full my-2'>
+                              <audio controls className='w-full my-2'>
+                                <source src={segmentComponent.audioFile.url} type='audio/mpeg' />
+                                <source src={segmentComponent.audioFile.url} type='audio/mp4' />
+                                <source src={segmentComponent.audioFile.url} type='audio/ogg' />
+                                <source src={segmentComponent.audioFile.url} type='audio/wav' />
+                                <source src={segmentComponent.audioFile.url} type='audio/aac' />
+                                <source src={segmentComponent.audioFile.url} type='audio/m4a' />
+                                <p>
+                                  Your browser doesn't support this audio file.
+                                </p>
+                              </audio>
+                            </div>
                           </div>
-                        </div>              
+                        }            
                         <AudioInput SegmentIndex={index} segmentComponentIndex={componentIndex} inputs={inputs} setInputs={() => setInputs} />
                         <div className={ segmentComponent.inputErrors.audioFile
                           ? 'mt-1 bg-red-100 text-red-600 rounded-lg p-2' : 'hidden' }>
